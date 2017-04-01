@@ -32,6 +32,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -171,7 +172,9 @@ public class KeyguardIndicationController {
 
             } else if (mPowerPluggedIn) {
                 String indication = computePowerIndication();
-                if (DEBUG_CHARGING_SPEED) {
+                           boolean showChargingCurrent = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.KEYGUARD_SHOW_CHARGING_CURRENT, 0) == 1;
+            if (showChargingCurrent) {
                     indication += ",  " + (mChargingWattage / 1000) + " mW";
                 }
                 mTextView.switchIndication(indication);

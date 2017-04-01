@@ -3560,7 +3560,13 @@ public final class Settings {
          * @hide
          */
         public static final String KEYGUARD_SHOW_DATE = "keyguard_show_date";
-      
+
+        /**
+         * Show or hide charging current on lockscreen when device is plugged in
+         * @hide
+         */
+        public static final String KEYGUARD_SHOW_CHARGING_CURRENT = "keyguard_show_charging_current"; 
+     
         /**
          * I am the lolrus.
          * <p>
