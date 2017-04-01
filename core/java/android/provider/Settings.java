@@ -3601,6 +3601,11 @@ public final class Settings {
          */
         public static final String NETWORK_TRAFFIC_COLOR = "network_traffic_color";
           
+        /**
+         * Don't allow the keyboard to fill the screen
+         * @hide
+         */
+        public static final String DISABLE_FULL_SCREEN_KEYBOARD = "disable_full_screen_keyboard";
               
         /**
          * I am the lolrus.
