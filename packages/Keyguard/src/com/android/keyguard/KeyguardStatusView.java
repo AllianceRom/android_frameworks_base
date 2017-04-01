@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
@@ -153,6 +154,7 @@ public class KeyguardStatusView extends GridLayout {
 
         refreshTime();
         refreshAlarmStatus(nextAlarm);
+        refreshVisibilities();
     }
 
     void refreshAlarmStatus(AlarmManager.AlarmClockInfo nextAlarm) {
@@ -193,6 +195,7 @@ public class KeyguardStatusView extends GridLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         KeyguardUpdateMonitor.getInstance(mContext).registerCallback(mInfoCallback);
+        refreshVisibilities(); 
     }
 
     @Override
@@ -221,6 +224,24 @@ public class KeyguardStatusView extends GridLayout {
     @Override
     public boolean hasOverlappingRendering() {
         return false;
+    }
+
+   private void refreshVisibilities() {
+        boolean showClock = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.KEYGUARD_SHOW_CLOCK, 1) == 1;
+        if (showClock) {
+            mClockView.setVisibility(View.VISIBLE);
+        } else {
+            mClockView.setVisibility(View.GONE);
+        }
+
+        boolean showDate = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.KEYGUARD_SHOW_DATE, 1) == 1;
+        if (showDate) {
+            mDateView.setVisibility(View.VISIBLE);
+        } else {
+            mDateView.setVisibility(View.GONE);
+        }
     }
 
     // DateFormat.getBestDateTimePattern is extremely expensive, and refresh is called often.

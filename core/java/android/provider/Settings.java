@@ -3548,7 +3548,19 @@ public final class Settings {
 
         /** @hide */
         public static final Validator LOCK_TO_APP_ENABLED_VALIDATOR = sBooleanValidator;
+ 
+        /**
+         * Show/hide the clock on the lockscreen
+         * @hide
+         */
+        public static final String KEYGUARD_SHOW_CLOCK = "keyguard_show_clock";
 
+        /**
+         * Show/hide the date on the lockscreen
+         * @hide
+         */
+        public static final String KEYGUARD_SHOW_DATE = "keyguard_show_date";
+      
         /**
          * I am the lolrus.
          * <p>
