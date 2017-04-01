@@ -3606,7 +3606,13 @@ public final class Settings {
          * @hide
          */
         public static final String DISABLE_FULL_SCREEN_KEYBOARD = "disable_full_screen_keyboard";
-              
+
+        /**
+         * Allow the volume keys to wake the device
+         * @hide
+         */
+        public static final String WAKE_WITH_VOLUME_KEYS = "wake_with_volume_keys";
+                        
         /**
          * I am the lolrus.
          * <p>
