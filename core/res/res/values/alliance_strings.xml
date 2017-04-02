@@ -37,5 +37,6 @@
     <string name="global_action_voice_search">Voice search</string>
     <string name="global_action_screenshot">Screenshot</string>
     <string name="global_action_flashlight">Flashlight</string>
+    <string name="restart_systemui">Restart SystemUI</string>
 
 </resources>

@@ -18,6 +18,7 @@
         <item>@string/reboot_soft</item>
         <item>@string/reboot_recovery</item>
         <item>@string/reboot_bootloader</item>
+        <item>@string/restart_systemui</item>
     </array>
 
     <!-- Do not translate. Defines the shutdown actions passed to the kernel.
@@ -27,5 +28,6 @@
         <item>soft_reboot</item>
         <item>recovery</item>
         <item>bootloader</item>
+        <item>restart_systemui</item>
      </string-array>
 </resources>
