@@ -3631,7 +3631,18 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_MENU_SECONDARY_TEXT_COLOR = "power_menu_secondary_text_color";
-         
+       
+        /**
+         * Color of the keyguard clock
+         * @hide
+         */
+        public static final String KEYGUARD_TIME_COLOR = "keyguard_time_color";
+
+        /**
+         * Color of the keyguard date
+         * @hide
+         */
+        public static final String KEYGUARD_DATE_COLOR = "keyguard_date_color";  
         /**
          * I am the lolrus.
          * <p>

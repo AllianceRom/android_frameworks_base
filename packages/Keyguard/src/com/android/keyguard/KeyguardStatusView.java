@@ -18,9 +18,11 @@ package com.android.keyguard;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -69,6 +71,7 @@ public class KeyguardStatusView extends GridLayout {
         @Override
         public void onStartedWakingUp() {
             setEnableMarquee(true);
+            refreshColors();
         }
 
         @Override
@@ -95,6 +98,7 @@ public class KeyguardStatusView extends GridLayout {
         super(context, attrs, defStyle);
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mLockPatternUtils = new LockPatternUtils(getContext());
+        refreshColors();
     }
 
     private void setEnableMarquee(boolean enabled) {
@@ -155,6 +159,7 @@ public class KeyguardStatusView extends GridLayout {
         refreshTime();
         refreshAlarmStatus(nextAlarm);
         refreshVisibilities();
+        refreshColors();
     }
 
     void refreshAlarmStatus(AlarmManager.AlarmClockInfo nextAlarm) {
@@ -241,6 +246,18 @@ public class KeyguardStatusView extends GridLayout {
             mDateView.setVisibility(View.VISIBLE);
         } else {
             mDateView.setVisibility(View.GONE);
+        }
+    }
+
+    private void refreshColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+        int timeColor = Settings.System.getInt(resolver, Settings.System.KEYGUARD_TIME_COLOR, Color.WHITE);
+        if (mClockView != null) {
+            mClockView.setTextColor(timeColor);
+        }
+        int dateColor = Settings.System.getInt(resolver, Settings.System.KEYGUARD_DATE_COLOR, Color.WHITE);
+        if (mDateView != null) {
+            mDateView.setTextColor(dateColor);
         }
     }
 
