@@ -3618,7 +3618,20 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_MENU_ICON_COLOR = "power_menu_icon_color";  
-                
+       
+         /**
+         /**
+         * Colorize power menu primary text color 
+         * @hide
+         */
+        public static final String POWER_MENU_PRIMARY_TEXT_COLOR = "power_menu_primary_text_color";
+
+        /**
+         * Colorize power menu secondary text color
+         * @hide
+         */
+        public static final String POWER_MENU_SECONDARY_TEXT_COLOR = "power_menu_secondary_text_color";
+         
         /**
          * I am the lolrus.
          * <p>
