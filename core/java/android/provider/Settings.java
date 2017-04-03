@@ -3651,6 +3651,12 @@ public final class Settings {
         public static final String KEYGUARD_ALARM_COLOR = "keyguard_alarm_color";
 
         /**
+         * Color of the keyguard owner info
+         * @hide
+         */
+        public static final String KEYGUARD_OWNER_COLOR = "keyguard_owner_color"; 
+
+        /**
          * I am the lolrus.
          * <p>
          * Nonzero values indicate that the user has a bukkit.
