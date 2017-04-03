@@ -3612,7 +3612,13 @@ public final class Settings {
          * @hide
          */
         public static final String WAKE_WITH_VOLUME_KEYS = "wake_with_volume_keys";
-                        
+        
+        /**
+         * Colorize power menu icons 
+         * @hide
+         */
+        public static final String POWER_MENU_ICON_COLOR = "power_menu_icon_color";  
+                
         /**
          * I am the lolrus.
          * <p>
