@@ -757,6 +757,9 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     private void refreshColors() {
         if (mLockIcon != null) {
             AllianceUtils.colorizeIcon(mContext, mLockIcon, Settings.System.KEYGUARD_LOCK_ICON_COLOR, 0xb3ffffff);
-        }  
+        } 
+        if (mCameraImageView != null) {
+            AllianceUtils.colorizeIcon(mContext, mCameraImageView, Settings.System.KEYGUARD_CAMERA_ICON_COLOR, 0xb3ffffff);
+        } 
     }
 }
