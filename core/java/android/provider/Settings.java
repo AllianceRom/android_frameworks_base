@@ -3669,6 +3669,12 @@ public final class Settings {
         public static final String KEYGUARD_CAMERA_ICON_COLOR = "keyguard_camera_icon_color";
 
         /**
+         * Color of the phone icon on lockscreen
+         * @hide
+         */
+        public static final String KEYGUARD_PHONE_ICON_COLOR = "keyguard_phone_icon_color";
+
+        /**
          * I am the lolrus.
          * <p>
          * Nonzero values indicate that the user has a bukkit.
