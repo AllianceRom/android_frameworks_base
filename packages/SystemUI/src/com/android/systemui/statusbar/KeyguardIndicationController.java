@@ -105,7 +105,7 @@ public class KeyguardIndicationController {
         if (visible) {
             hideTransientIndication();
             updateIndication();
-           refreshColors();
+            refreshColors();
         }
     }
 
@@ -147,7 +147,7 @@ public class KeyguardIndicationController {
         mTransientTextColor = textColor;
         mHandler.removeMessages(MSG_HIDE_TRANSIENT);
         updateIndication();
-           refreshColors();
+        refreshColors();
     }
 
     /**
@@ -168,7 +168,7 @@ public class KeyguardIndicationController {
             if (!mUserManager.isUserUnlocked(ActivityManager.getCurrentUser())) {
                 mTextView.switchIndication(com.android.internal.R.string.lockscreen_storage_locked);
                 mTextView.setTextColor(Color.WHITE);
-           refreshColors();
+                refreshColors();
 
 
             } else if (!TextUtils.isEmpty(mTransientIndication)) {
@@ -185,12 +185,12 @@ public class KeyguardIndicationController {
                 }
                 mTextView.switchIndication(indication);
                 mTextView.setTextColor(Color.WHITE);
-           refreshColors();
+                refreshColors();
 
             } else {
                 mTextView.switchIndication(mRestingIndication);
                 mTextView.setTextColor(Color.WHITE);
-           refreshColors();
+                refreshColors();
             }
         }
     }
@@ -310,7 +310,7 @@ public class KeyguardIndicationController {
                 mHandler.removeMessages(MSG_HIDE_TRANSIENT);
                 hideTransientIndicationDelayed(5000);
                 mMessageToShowOnScreenOn = null;
-           refreshColors();
+                refreshColors();
             }
         }
 
@@ -368,6 +368,7 @@ public class KeyguardIndicationController {
             StatusBarKeyguardViewManager statusBarKeyguardViewManager) {
         mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
     }
+
    private void refreshColors() {
         ContentResolver resolver = mContext.getContentResolver();
         int chargeColor = Settings.System.getInt(resolver, Settings.System.KEYGUARD_CHARGE_COLOR, Color.WHITE);
