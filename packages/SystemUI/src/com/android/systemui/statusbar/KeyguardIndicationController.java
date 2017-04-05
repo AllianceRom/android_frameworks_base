@@ -18,6 +18,7 @@ package com.android.systemui.statusbar;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -104,6 +105,7 @@ public class KeyguardIndicationController {
         if (visible) {
             hideTransientIndication();
             updateIndication();
+           refreshColors();
         }
     }
 
@@ -145,6 +147,7 @@ public class KeyguardIndicationController {
         mTransientTextColor = textColor;
         mHandler.removeMessages(MSG_HIDE_TRANSIENT);
         updateIndication();
+           refreshColors();
     }
 
     /**
@@ -165,10 +168,13 @@ public class KeyguardIndicationController {
             if (!mUserManager.isUserUnlocked(ActivityManager.getCurrentUser())) {
                 mTextView.switchIndication(com.android.internal.R.string.lockscreen_storage_locked);
                 mTextView.setTextColor(Color.WHITE);
+           refreshColors();
+
 
             } else if (!TextUtils.isEmpty(mTransientIndication)) {
                 mTextView.switchIndication(mTransientIndication);
                 mTextView.setTextColor(mTransientTextColor);
+           refreshColors();
 
             } else if (mPowerPluggedIn) {
                 String indication = computePowerIndication();
@@ -179,10 +185,12 @@ public class KeyguardIndicationController {
                 }
                 mTextView.switchIndication(indication);
                 mTextView.setTextColor(Color.WHITE);
+           refreshColors();
 
             } else {
                 mTextView.switchIndication(mRestingIndication);
                 mTextView.setTextColor(Color.WHITE);
+           refreshColors();
             }
         }
     }
@@ -302,6 +310,7 @@ public class KeyguardIndicationController {
                 mHandler.removeMessages(MSG_HIDE_TRANSIENT);
                 hideTransientIndicationDelayed(5000);
                 mMessageToShowOnScreenOn = null;
+           refreshColors();
             }
         }
 
@@ -358,5 +367,12 @@ public class KeyguardIndicationController {
     public void setStatusBarKeyguardViewManager(
             StatusBarKeyguardViewManager statusBarKeyguardViewManager) {
         mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
+    }
+   private void refreshColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+        int chargeColor = Settings.System.getInt(resolver, Settings.System.KEYGUARD_CHARGE_COLOR, Color.WHITE);
+        if (mTextView != null) {
+            mTextView.setTextColor(chargeColor);
+        }
     }
 }

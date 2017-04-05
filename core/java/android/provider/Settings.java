@@ -3651,6 +3651,12 @@ public final class Settings {
         public static final String KEYGUARD_ALARM_COLOR = "keyguard_alarm_color";
 
         /**
+         * Color of the keyguard charging text
+         * @hide
+         */
+        public static final String KEYGUARD_CHARGE_COLOR = "keyguard_charge_color";
+
+        /**
          * Color of the keyguard owner info
          * @hide
          */
