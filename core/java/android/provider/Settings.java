@@ -3673,6 +3673,12 @@ public final class Settings {
          * @hide
          */
         public static final String KEYGUARD_PHONE_ICON_COLOR = "keyguard_phone_icon_color";
+ 
+         /**
+         /**
+        * @hide
+        */
+        public static final String TOAST_TEXT_COLOR = "toast_text_color";
 
         /**
          * I am the lolrus.
