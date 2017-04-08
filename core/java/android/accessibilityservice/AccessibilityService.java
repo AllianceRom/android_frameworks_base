@@ -334,8 +334,7 @@ public abstract class AccessibilityService extends Service {
     public static final int GLOBAL_ACTION_HOME = 2;
 
     /**
-     * Action to toggle showing the overview of recent apps. Will fail on platforms that don't
-     * show recent apps.
+     * Action to toggle showing the overview of recent apps
      */
     public static final int GLOBAL_ACTION_RECENTS = 3;
 

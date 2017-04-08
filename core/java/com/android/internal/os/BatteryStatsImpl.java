@@ -108,7 +108,7 @@ public class BatteryStatsImpl extends BatteryStats {
     private static final int MAGIC = 0xBA757475; // 'BATSTATS'
 
     // Current on-disk Parcel version
-    private static final int VERSION = 151 + (USE_OLD_HISTORY ? 1000 : 0);
+    private static final int VERSION = 150 + (USE_OLD_HISTORY ? 1000 : 0);
 
     // Maximum number of items we will record in the history.
     private static final int MAX_HISTORY_ITEMS = 2000;
@@ -1593,7 +1593,7 @@ public class BatteryStatsImpl extends BatteryStats {
         @Override
         public void writeToParcel(Parcel out, long elapsedRealtimeUs) {
             super.writeToParcel(out, elapsedRealtimeUs);
-            out.writeLong(getMaxDurationMsLocked(elapsedRealtimeUs / 1000));
+            out.writeLong(mMaxDurationMs);
         }
 
         /**
@@ -1606,7 +1606,7 @@ public class BatteryStatsImpl extends BatteryStats {
         @Override
         public void writeSummaryFromParcelLocked(Parcel out, long elapsedRealtimeUs) {
             super.writeSummaryFromParcelLocked(out, elapsedRealtimeUs);
-            out.writeLong(getMaxDurationMsLocked(elapsedRealtimeUs / 1000));
+            out.writeLong(mMaxDurationMs);
         }
 
         /**
@@ -1630,7 +1630,7 @@ public class BatteryStatsImpl extends BatteryStats {
         public void onTimeStarted(long elapsedRealtimeUs, long baseUptime, long baseRealtime) {
             super.onTimeStarted(elapsedRealtimeUs, baseUptime, baseRealtime);
             if (mNesting > 0) {
-                mStartTimeMs = baseRealtime / 1000;
+                mStartTimeMs = mTimeBase.getRealtime(mClocks.elapsedRealtime()*1000) / 1000;
             }
         }
 
@@ -1640,11 +1640,10 @@ public class BatteryStatsImpl extends BatteryStats {
          * If the timer is running, add the duration into mCurrentDurationMs.
          */
         @Override
-        public void onTimeStopped(long elapsedRealtimeUs, long baseUptime, long baseRealtimeUs) {
-            super.onTimeStopped(elapsedRealtimeUs, baseUptime, baseRealtimeUs);
+        public void onTimeStopped(long elapsedRealtimeUs, long baseUptime, long baseRealtime) {
+            super.onTimeStopped(elapsedRealtimeUs, baseUptime, baseRealtime);
             if (mNesting > 0) {
-                // baseRealtimeUs has already been converted to the timebase's realtime.
-                mCurrentDurationMs += (baseRealtimeUs / 1000) - mStartTimeMs;
+                mCurrentDurationMs += (elapsedRealtimeUs / 1000) - mStartTimeMs;
             }
             mStartTimeMs = -1;
         }
@@ -1659,7 +1658,7 @@ public class BatteryStatsImpl extends BatteryStats {
             super.startRunningLocked(elapsedRealtimeMs);
             if (mNesting == 1 && mTimeBase.isRunning()) {
                 // Just started
-                mStartTimeMs = mTimeBase.getRealtime(elapsedRealtimeMs * 1000) / 1000;
+                mStartTimeMs = mTimeBase.getRealtime(mClocks.elapsedRealtime()*1000) / 1000;
             }
         }
 
@@ -1671,7 +1670,8 @@ public class BatteryStatsImpl extends BatteryStats {
          */
         @Override
         public void stopRunningLocked(long elapsedRealtimeMs) {
-            if (mNesting == 1) {
+            super.stopRunningLocked(elapsedRealtimeMs);
+            if (mNesting == 0) {
                 final long durationMs = getCurrentDurationMsLocked(elapsedRealtimeMs);
                 if (durationMs > mMaxDurationMs) {
                     mMaxDurationMs = durationMs;
@@ -1679,9 +1679,6 @@ public class BatteryStatsImpl extends BatteryStats {
                 mStartTimeMs = -1;
                 mCurrentDurationMs = 0;
             }
-            // super method decrements mNesting, which getCurrentDurationMsLocked relies on,
-            // so call super.stopRunningLocked after calling getCurrentDurationMsLocked.
-            super.stopRunningLocked(elapsedRealtimeMs);
         }
 
         @Override
@@ -1723,9 +1720,11 @@ public class BatteryStatsImpl extends BatteryStats {
         @Override
         public long getCurrentDurationMsLocked(long elapsedRealtimeMs) {
             long durationMs = mCurrentDurationMs;
-            if (mNesting > 0 && mTimeBase.isRunning()) {
-                durationMs += (mTimeBase.getRealtime(elapsedRealtimeMs*1000)/1000)
-                        - mStartTimeMs;
+            if (mNesting > 0) {
+                if (mTimeBase.isRunning()) {
+                    durationMs += (mTimeBase.getRealtime(elapsedRealtimeMs*1000)/1000)
+                            - mStartTimeMs;
+                }
             }
             return durationMs;
         }
@@ -2878,22 +2877,8 @@ public class BatteryStatsImpl extends BatteryStats {
             mHistoryLastWritten.setTo(mHistoryLastLastWritten);
         }
 
-        boolean recordResetDueToOverflow = false;
         final int dataSize = mHistoryBuffer.dataSize();
-        if (dataSize >= MAX_MAX_HISTORY_BUFFER*3) {
-            // Clients can't deal with history buffers this large. This only
-            // really happens when the device is on charger and interacted with
-            // for long periods of time, like in retail mode. Since the device is
-            // most likely charged, when unplugged, stats would have reset anyways.
-            // Reset the stats and mark that we overflowed.
-            // b/32540341
-            resetAllStatsLocked();
-
-            // Mark that we want to set *OVERFLOW* event and the RESET:START
-            // events.
-            recordResetDueToOverflow = true;
-
-        } else if (dataSize >= MAX_HISTORY_BUFFER) {
+        if (dataSize >= MAX_HISTORY_BUFFER) {
             if (!mHistoryOverflow) {
                 mHistoryOverflow = true;
                 addHistoryBufferLocked(elapsedRealtimeMs, uptimeMs, HistoryItem.CMD_UPDATE, cur);
@@ -2939,12 +2924,9 @@ public class BatteryStatsImpl extends BatteryStats {
             return;
         }
 
-        if (dataSize == 0 || recordResetDueToOverflow) {
+        if (dataSize == 0) {
             // The history is currently empty; we need it to start with a time stamp.
             cur.currentTime = System.currentTimeMillis();
-            if (recordResetDueToOverflow) {
-                addHistoryBufferLocked(elapsedRealtimeMs, uptimeMs, HistoryItem.CMD_OVERFLOW, cur);
-            }
             addHistoryBufferLocked(elapsedRealtimeMs, uptimeMs, HistoryItem.CMD_RESET, cur);
         }
         addHistoryBufferLocked(elapsedRealtimeMs, uptimeMs, HistoryItem.CMD_UPDATE, cur);
@@ -9612,9 +9594,9 @@ public class BatteryStatsImpl extends BatteryStats {
                 }
                 doWrite = true;
                 resetAllStatsLocked();
-                if (chargeUAh > 0 && level > 0) {
+                if (chargeUAh > 0) {
                     // Only use the reported coulomb charge value if it is supported and reported.
-                    mEstimatedBatteryCapacity = (int) ((chargeUAh / 1000) / (level / 100.0));
+                    mEstimatedBatteryCapacity = (int) ((level / 100.0) * (chargeUAh / 1000));
                 }
                 mDischargeStartLevel = level;
                 reset = true;
@@ -10223,8 +10205,6 @@ public class BatteryStatsImpl extends BatteryStats {
         writeSyncLocked();
         mShuttingDown = true;
     }
-
-    Parcel mPendingWrite = null;
     final ReentrantLock mWriteLock = new ReentrantLock();
 
     public void writeAsyncLocked() {
@@ -10245,37 +10225,27 @@ public class BatteryStatsImpl extends BatteryStats {
             return;
         }
 
-        Parcel out = Parcel.obtain();
+        final Parcel out = Parcel.obtain();
         writeSummaryToParcel(out, true);
         mLastWriteTime = mClocks.elapsedRealtime();
 
-        if (mPendingWrite != null) {
-            mPendingWrite.recycle();
-        }
-        mPendingWrite = out;
-
         if (sync) {
-            commitPendingDataToDisk();
+            commitPendingDataToDisk(out);
         } else {
             BackgroundThread.getHandler().post(new Runnable() {
                 @Override public void run() {
-                    commitPendingDataToDisk();
+                    commitPendingDataToDisk(out);
                 }
             });
         }
     }
 
-    public void commitPendingDataToDisk() {
-        final Parcel next;
-        synchronized (this) {
-            next = mPendingWrite;
-            mPendingWrite = null;
-            if (next == null) {
-                return;
-            }
-
-            mWriteLock.lock();
+    public void commitPendingDataToDisk(Parcel next) {
+        if (next == null) {
+            return;
         }
+
+        mWriteLock.lock();
 
         try {
             FileOutputStream stream = new FileOutputStream(mFile.chooseForWrite());

@@ -144,7 +144,8 @@ public class SecurityLog {
         }
 
         /**
-         * Returns the payload contained in this log entry or {@code null} if there is no payload.
+         * Returns the payload contained in this log. Each call to this method will
+         * retrieve the next payload item. If no more payload exists, it returns {@code null}.
          */
         public Object getData() {
             return mEvent.getData();

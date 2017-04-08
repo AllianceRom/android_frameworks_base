@@ -58,6 +58,7 @@ import android.text.TextUtils;
 import android.util.AndroidException;
 import android.util.ArrayMap;
 import android.util.ArraySet;
+import android.util.Base64;
 import android.util.Log;
 import android.util.MemoryIntArray;
 
@@ -67,6 +68,7 @@ import com.android.internal.widget.ILockSettings;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1922,9 +1924,25 @@ public final class Settings {
             return getStringForUser(resolver, name, UserHandle.myUserId());
         }
 
+        /**
+         * Look up a name in the database
+         * @param resolver to access the database with
+         * @param name to look up in the table
+         * @param defaultValue to return if not found
+         * @return the corresponding value, or defaultValue if not present
+         */
+        public static String getString(
+                ContentResolver resolver, String name, String defaultValue) {
+            String result = getString(resolver, name);
+            if(result == null)
+                return defaultValue;
+            return result;
+        }
+
         /** @hide */
         public static String getStringForUser(ContentResolver resolver, String name,
                 int userHandle) {
+            android.util.SeempLog.record(android.util.SeempLog.getSeempGetApiIdFromValue(name));
             if (MOVED_TO_SECURE.contains(name)) {
                 Log.w(TAG, "Setting " + name + " has moved from android.provider.Settings.System"
                         + " to android.provider.Settings.Secure, returning read-only value.");
@@ -1952,6 +1970,7 @@ public final class Settings {
         /** @hide */
         public static boolean putStringForUser(ContentResolver resolver, String name, String value,
                 int userHandle) {
+            android.util.SeempLog.record(android.util.SeempLog.getSeempPutApiIdFromValue(name));
             if (MOVED_TO_SECURE.contains(name)) {
                 Log.w(TAG, "Setting " + name + " has moved from android.provider.Settings.System"
                         + " to android.provider.Settings.Secure, value is unchanged.");
@@ -2757,15 +2776,6 @@ public final class Settings {
                 new InclusiveIntegerRangeValidator(0, 255);
 
         /**
-         * The screen backlight brightness between 0 and 255.
-         * @hide
-         */
-        public static final String SCREEN_BRIGHTNESS_FOR_VR = "screen_brightness_for_vr";
-
-        private static final Validator SCREEN_BRIGHTNESS_FOR_VR_VALIDATOR =
-                new InclusiveIntegerRangeValidator(0, 255);
-
-        /**
          * Control whether to enable automatic brightness mode.
          */
         public static final String SCREEN_BRIGHTNESS_MODE = "screen_brightness_mode";
@@ -3216,6 +3226,12 @@ public final class Settings {
         public static final String ANIMATOR_DURATION_SCALE = Global.ANIMATOR_DURATION_SCALE;
 
         /**
+         * Show the pending notification counts as overlays on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
+
+        /**
          * Control whether the accelerometer will be used to change screen
          * orientation.  If 0, it will not be used unless explicitly requested
          * by the application; if 1, it will be used by default unless explicitly
@@ -3534,7 +3550,12 @@ public final class Settings {
 
         /** @hide */
         public static final Validator SIP_ASK_ME_EACH_TIME_VALIDATOR = sBooleanValidator;
-
+		
+        /**
+         * Whether to enable the pixel navbar animation
+         * @hide
+         */
+        public static final String PIXEL_NAV_ANIMATION = "pixel_nav_animation";
         /**
          * Pointer speed setting.
          * This is an integer value in a range between -7 and +7, so there are 15 possible values.
@@ -3717,11 +3738,278 @@ public final class Settings {
         };
 
         /**
+         * Whether touchscreen gestures give a haptic feedback
+         *
+         * @hide
+         */
+        public static final String TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK =
+                                "touchscreen_gesture_haptic_feedback";
+
+        /**
+         * Set a device-specific setting
+         *
+         * @param key Key
+         * @param value Value
+         * @hide
+         */
+        public static void putDeviceSpecificSetting(
+                ContentResolver resolver, String key, String value) {
+            // Retrieve current settings
+            String currentSettings = getString(
+                                resolver, DEVICE_SPECIFIC_SETTINGS, "");
+            // Encode new setting
+            String newKey   = new String(Base64.encode(key.getBytes(
+                                    StandardCharsets.UTF_8),
+                                    Base64.NO_PADDING|Base64.NO_WRAP),
+                                StandardCharsets.UTF_8);
+            String newValue = new String(Base64.encode(value.getBytes(
+                                    StandardCharsets.UTF_8),
+                                    Base64.NO_PADDING|Base64.NO_WRAP),
+                                StandardCharsets.UTF_8);
+            // Create an array out of the current settings
+            String[] currentSettingsArr = currentSettings.split(";");
+
+            String newSettings = "";
+
+            if(doesDeviceSpecificSettingExist(resolver, key)) {
+                for ( int i = 0; i < currentSettingsArr.length; i++ ) {
+                    String[] curSetting = currentSettingsArr[i].split("=");
+                    if(new String(Base64.decode(
+                                    curSetting[0],
+                                    Base64.NO_PADDING|Base64.NO_WRAP),
+                                StandardCharsets.UTF_8).equals(key)) {
+                        currentSettingsArr[i] = newKey + "=" + newValue;
+                        break;
+                    }
+                }
+                // Create one string to save
+                for ( int i = 0; i < currentSettingsArr.length; i++) {
+                    newSettings += currentSettingsArr[i];
+                    if(i < currentSettingsArr.length - 1)
+                        newSettings += ";";
+                }
+            } else {
+                // Create a new array for new settings
+                String[] newSettingsArr = new String[currentSettingsArr.length + 1];
+                // Copy the current settings into new settings
+                java.lang.System.arraycopy(
+                    currentSettingsArr, 0, newSettingsArr, 0,
+                        currentSettingsArr.length);
+
+                // Add the new setting
+                newSettingsArr[newSettingsArr.length - 1] =
+                    newKey + "=" + newValue;
+
+                // Create one string to save
+                for ( int i = 0; i < newSettingsArr.length; i++) {
+                    newSettings += newSettingsArr[i];
+                    if(i < newSettingsArr.length - 1)
+                        newSettings += ";";
+                }
+            }
+
+            // Save it
+            putString(resolver, DEVICE_SPECIFIC_SETTINGS, newSettings);
+        }
+
+        /**
+         * Get a device-specific setting
+         *
+         * @param key Key of setting
+         * @return String contains value
+         * @hide
+         */
+         public static String getDeviceSpecificSetting(
+                ContentResolver resolver, String key, String defaultValue) {
+            // Retrieve current settings
+            String currentSettings = getString(
+                                resolver, DEVICE_SPECIFIC_SETTINGS, "");
+            if(currentSettings.isEmpty())
+                return defaultValue;
+            // Create an array out of the current settings
+            String[] currentSettingsArr = currentSettings.split(";");
+            // Check the array and find the key.
+            // Return the associated value if matches.
+            for ( int i = 0; i < currentSettingsArr.length; i++ ) {
+                String[] curSetting = currentSettingsArr[i].split("=");
+                String ikey = new String(Base64.decode(
+                                    curSetting[0],
+                                    Base64.NO_PADDING|Base64.NO_WRAP),
+                                StandardCharsets.UTF_8);
+                if(ikey.equals(key))
+                    return new String(Base64.decode(
+                                    curSetting[1],
+                                    Base64.NO_PADDING|Base64.NO_WRAP),
+                                StandardCharsets.UTF_8);
+            }
+            // No match found. Returning default value.
+            return defaultValue;
+         }
+
+         /**
+          * Check whether a device-specific setting already exists.
+          * This is almost the same as getDeviceSpecificSetting.
+          * But we can't check if the value returned from it is empty,
+          * because the value could be empty by default.
+          * We also can't just pass a specific default value and
+          * check whether it returns the same value as the default value
+          * because the value of the setting itself could be identical.
+          * So we need to check whether the key has already been saved.
+          *
+          * @param resolver ContentResolver
+          * @param key Key
+          * @return boolean: true if found, false if not
+          * @hide
+          */
+         public static boolean doesDeviceSpecificSettingExist(
+                    ContentResolver resolver, String key) {
+            // Retrieve current settings
+            String currentSettings = getString(
+                                resolver, DEVICE_SPECIFIC_SETTINGS, "");
+            if(currentSettings.isEmpty())
+                return false;
+            // Create an array out of the current settings
+            String[] currentSettingsArr = currentSettings.split(";");
+            // Check the array and find the key.
+            // Return true if matches.
+            for ( int i = 0; i < currentSettingsArr.length; i++ ) {
+                String[] curSetting = currentSettingsArr[i].split("=");
+                String ikey = new String(Base64.decode(
+                                    curSetting[0],
+                                    Base64.NO_PADDING|Base64.NO_WRAP),
+                                StandardCharsets.UTF_8);
+                if(ikey.equals(key))
+                    return true;
+            }
+            // No match found. Returning false.
+            return false;
+         }
+
+
+        /**
+         * Settings string for device-specific stuff
+         *
+         * @hide
+         */
+         public static final String DEVICE_SPECIFIC_SETTINGS =
+                                "device_specific_settings";
+
+        /**
+         * Long press on home button behavior
+         *
+         * @hide
+         */
+        public static final String LONG_PRESS_HOME_BUTTON_BEHAVIOR =
+                                "long_press_home_button_behavior";
+
+        /**
+         * Button backlight brightness
+         *
+         * @hide
+         */
+        public static final String BUTTON_BACKLIGHT_BRIGHTNESS =
+                                "button_backlight_brightness";
+
+        /**
+         * Button backlight timeout
+         *
+         * @hide
+         */
+        public static final String BUTTON_BACKLIGHT_TIMEOUT =
+                                "button_backlight_timeout";
+
+        /**
+         * Button backlight control type
+         *
+         * @hide
+         */
+        public static final String BUTTON_BACKLIGHT_CONTROL_TYPE =
+                                "button_backlight_control_type";
+        /**
+         * Hardware buttons toggle
+         *
+         * @hide
+         */
+        public static final String HARDWARE_BUTTONS_ENABLED =
+                                "hardware_buttons_enabled";
+
+        /**
+         * Lockscreen Visualizer
+         *
+         * @hide
+         */
+        public static final String SHOW_LOCKSCREEN_VISUALIZER =
+                                "show_lockscreen_visualizer";
+        public static final int SHOW_LOCKSCREEN_VISUALIZER_DEFAULT = 1;
+
+        /**
+         * Modern Services
+         *
+         * @hide
+         */
+        public static final String ENABLE_MODERN_SERVICES =
+                                "enable_modern_services";
+
+        /**
+         * Whether the proximity sensor should be used to check whether to
+         * wake the device or not (e. g. for preventing pocket touches)
+         *
+         * @hide
+         */
+        public static final String PROXIMITY_ON_WAKE =
+                                "proximity_on_wake";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
          * the setting value. See an example above.
          */
+
+        /**
+         * Whether user can enable/disable navigation bar.
+         * <p>
+         * Type: int (0 for false, 1 for true)
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ENABLED = "navigation_bar_enabled";
+
+        /**
+         *  Enable statusbar double tap gesture on to put device to sleep
+         * @hide
+         */
+        public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
+
+        /**
+         * Whether Heads-up notifications should be shown or not
+         *
+         * @hide
+         */
+         public static final String KEY_ENABLE_HEADSUP_NOTIFICATIONS =
+                                        "key_enable_headsup_notifications";
+
+        /**
+         * Status bar carrier label
+         * 0: Hide
+         * 1: Display on keyguard status bar
+         * 2: Display on Normal status bar
+         * 3: Enabled for both
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_CARRIER = "status_bar_show_carrier";
+
+        /**
+         * custom carrier label. The value is
+         * String.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
+        /**
+         * Whether to show the notification ticker on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_TICKER = "status_bar_show_ticker";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -3777,7 +4065,10 @@ public final class Settings {
             RINGTONE,
             LOCK_TO_APP_ENABLED,
             NOTIFICATION_SOUND,
-            ACCELEROMETER_ROTATION
+            ACCELEROMETER_ROTATION,
+            SHOW_LOCKSCREEN_VISUALIZER,
+            KEY_ENABLE_HEADSUP_NOTIFICATIONS,
+            STATUS_BAR_SHOW_TICKER
         };
 
         /**
@@ -3831,6 +4122,16 @@ public final class Settings {
             PUBLIC_SETTINGS.add(HAPTIC_FEEDBACK_ENABLED);
             PUBLIC_SETTINGS.add(SHOW_WEB_SUGGESTIONS);
             PUBLIC_SETTINGS.add(VIBRATE_WHEN_RINGING);
+            PUBLIC_SETTINGS.add(TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK);
+            PUBLIC_SETTINGS.add(PROXIMITY_ON_WAKE);
+            PUBLIC_SETTINGS.add(DEVICE_SPECIFIC_SETTINGS);
+            PUBLIC_SETTINGS.add(LONG_PRESS_HOME_BUTTON_BEHAVIOR);
+            PUBLIC_SETTINGS.add(HARDWARE_BUTTONS_ENABLED);
+            PUBLIC_SETTINGS.add(BUTTON_BACKLIGHT_BRIGHTNESS);
+            PUBLIC_SETTINGS.add(BUTTON_BACKLIGHT_TIMEOUT);
+            PUBLIC_SETTINGS.add(SHOW_LOCKSCREEN_VISUALIZER);
+            PUBLIC_SETTINGS.add(ENABLE_MODERN_SERVICES);
+            PUBLIC_SETTINGS.add(NAVIGATION_BAR_ENABLED);
         }
 
         /**
@@ -3877,6 +4178,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(POINTER_SPEED);
             PRIVATE_SETTINGS.add(LOCK_TO_APP_ENABLED);
             PRIVATE_SETTINGS.add(EGG_MODE);
+            PRIVATE_SETTINGS.add(BUTTON_BACKLIGHT_CONTROL_TYPE);
         }
 
         /**
@@ -3896,7 +4198,6 @@ public final class Settings {
             VALIDATORS.put(DIM_SCREEN, DIM_SCREEN_VALIDATOR);
             VALIDATORS.put(SCREEN_OFF_TIMEOUT, SCREEN_OFF_TIMEOUT_VALIDATOR);
             VALIDATORS.put(SCREEN_BRIGHTNESS, SCREEN_BRIGHTNESS_VALIDATOR);
-            VALIDATORS.put(SCREEN_BRIGHTNESS_FOR_VR, SCREEN_BRIGHTNESS_FOR_VR_VALIDATOR);
             VALIDATORS.put(SCREEN_BRIGHTNESS_MODE, SCREEN_BRIGHTNESS_MODE_VALIDATOR);
             VALIDATORS.put(MODE_RINGER_STREAMS_AFFECTED, MODE_RINGER_STREAMS_AFFECTED_VALIDATOR);
             VALIDATORS.put(MUTE_STREAMS_AFFECTED, MUTE_STREAMS_AFFECTED_VALIDATOR);
@@ -4326,6 +4627,8 @@ public final class Settings {
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_ON);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_P2P_DEVICE_NAME);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_SAVED_STATE);
+            MOVED_TO_GLOBAL.add(Settings.Global.WIFI_HOTSPOT2_ENABLED);
+            MOVED_TO_GLOBAL.add(Settings.Global.WIFI_HOTSPOT2_REL1_ENABLED);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_SUPPLICANT_SCAN_INTERVAL_MS);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_SUSPEND_OPTIMIZATIONS_ENABLED);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_VERBOSE_LOGGING_ENABLED);
@@ -4374,6 +4677,7 @@ public final class Settings {
             MOVED_TO_GLOBAL.add(Settings.Global.DEFAULT_DNS_SERVER);
             MOVED_TO_GLOBAL.add(Settings.Global.PREFERRED_NETWORK_MODE);
             MOVED_TO_GLOBAL.add(Settings.Global.WEBVIEW_DATA_REDUCTION_PROXY_KEY);
+            MOVED_TO_GLOBAL.add(Settings.Global.WIFI_AUTO_CONNECT_TYPE);
         }
 
         /** @hide */
@@ -4922,6 +5226,15 @@ public final class Settings {
         public static final String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
 
         /**
+         * Whether applications can fake a signature.
+         *
+         * <p>1 = permit apps to fake signature
+         * <p>0 = disable this feature
+         * @hide
+         */
+        public static final String ALLOW_SIGNATURE_FAKE = "allow_signature_fake";
+
+        /**
          * Comma-separated list of location providers that activities may access. Do not rely on
          * this value being present in settings.db or on ContentObserver notifications on the
          * corresponding Uri.
@@ -4977,6 +5290,12 @@ public final class Settings {
          * Best-effort location computation allowed.
          */
         public static final int LOCATION_MODE_HIGH_ACCURACY = 3;
+        /**
+         * Setting to configure Wifi disconnect delay duration in seconds.
+         * @hide
+         **/
+        public static final String WIFI_DISCONNECT_DELAY_DURATION =
+                "wifi_disconnect_delay_duration";
 
         /**
          * A flag containing settings used for biometric weak
@@ -5502,13 +5821,6 @@ public final class Settings {
          * @hide
          */
         public static final String LONG_PRESS_TIMEOUT = "long_press_timeout";
-
-        /**
-         * The duration in milliseconds between the first tap's up event and the second tap's
-         * down event for an interaction to be considered part of the same multi-press.
-         * @hide
-         */
-        public static final String MULTI_PRESS_TIMEOUT = "multi_press_timeout";
 
         /**
          * List of the enabled print services.
@@ -6083,36 +6395,6 @@ public final class Settings {
                 INCALL_POWER_BUTTON_BEHAVIOR_SCREEN_OFF;
 
         /**
-         * What happens when the user presses the Back button while in-call
-         * and the screen is on.<br/>
-         * <b>Values:</b><br/>
-         * 0 - The Back buttons does nothing different.<br/>
-         * 1 - The Back button hangs up the current call.<br/>
-         *
-         * @hide
-         */
-        public static final String INCALL_BACK_BUTTON_BEHAVIOR = "incall_back_button_behavior";
-
-        /**
-         * INCALL_BACK_BUTTON_BEHAVIOR value for no action.
-         * @hide
-         */
-        public static final int INCALL_BACK_BUTTON_BEHAVIOR_NONE = 0x0;
-
-        /**
-         * INCALL_BACK_BUTTON_BEHAVIOR value for "hang up".
-         * @hide
-         */
-        public static final int INCALL_BACK_BUTTON_BEHAVIOR_HANGUP = 0x1;
-
-        /**
-         * INCALL_POWER_BUTTON_BEHAVIOR default value.
-         * @hide
-         */
-        public static final int INCALL_BACK_BUTTON_BEHAVIOR_DEFAULT =
-                INCALL_BACK_BUTTON_BEHAVIOR_NONE;
-
-        /**
          * Whether the device should wake when the wake gesture sensor detects motion.
          * @hide
          */
@@ -6304,14 +6586,6 @@ public final class Settings {
                 "lock_screen_show_notifications";
 
         /**
-         * This preference stores the last stack active task time for each user, which affects what
-         * tasks will be visible in Overview.
-         * @hide
-         */
-        public static final String OVERVIEW_LAST_STACK_ACTIVE_TIME =
-                "overview_last_stack_active_time";
-
-        /**
          * List of TV inputs that are currently hidden. This is a string
          * containing the IDs of all hidden TV inputs. Each ID is encoded by
          * {@link android.net.Uri#encode(String)} and separated by ':'.
@@ -6382,6 +6656,40 @@ public final class Settings {
         public static final String CAMERA_DOUBLE_TAP_POWER_GESTURE_DISABLED =
                 "camera_double_tap_power_gesture_disabled";
 
+       /**
+         * Status bar battery %
+         * 0: Hide the battery percentage
+         * 1: Display the battery percentage inside the icon
+         * 2: Display the battery percentage next to the icon
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+
+
+        /**
+         * Display style of the status bar battery information
+         * 0: Display the battery an icon in portrait mode
+         * 2: Display the battery as a circle
+         * 4: Hide the battery status information
+         * 5: Display the battery an icon in landscape mode
+         * 6: Display the battery as plain text
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
+
+        /**
+         * Whether to sync the battery tile stile with the statusbar battery icon style
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STYLE_TILE = "status_bar_battery_style_tile";
+
+        /**
+         * One Handed mode toggle
+         * @hide
+         */
+        public static final String ONE_HANDED_MODE_UI = "one_handed_mode_ui";
+
         /**
          * Whether the camera double twist gesture to flip between front and back mode should be
          * enabled.
@@ -6396,6 +6704,14 @@ public final class Settings {
          * @hide
          */
         public static final String NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
+
+
+        /**
+        * Whether to force percentage text out of the battery icon when charging
+          *
+          * @hide
+        */
+         public static final String FORCE_CHARGE_BATTERY_TEXT = "force_charge_battery_text";
 
         /**
          * Control whether Night display will automatically activate/deactivate.
@@ -6416,6 +6732,12 @@ public final class Settings {
          * @hide
          */
         public static final String NIGHT_DISPLAY_CUSTOM_END_TIME = "night_display_custom_end_time";
+
+        /**
+         * Whether brightness should automatically adjust based on twilight state.
+         * @hide
+         */
+        public static final String BRIGHTNESS_USE_TWILIGHT = "brightness_use_twilight";
 
         /**
          * Names of the service components that the current user has explicitly allowed to
@@ -6473,6 +6795,14 @@ public final class Settings {
          */
         public static final String MANAGED_PROFILE_CONTACT_REMOTE_SEARCH =
                 "managed_profile_contact_remote_search";
+
+        /**
+         * Whether to disable dropbox
+         *
+         * @hide
+         */
+        public static final String DISABLE_DROPBOX =
+                "debug_disable_dropbox";
 
         /**
          * Whether or not the automatic storage manager is enabled and should run on the device.
@@ -6542,11 +6872,17 @@ public final class Settings {
          */
         public static final String WEB_ACTION_ENABLED = "web_action_enabled";
 
-        /**
-         * Has this pairable device been paired or upgraded from a previously paired system.
+        /*
+         * Whether to include options in power menu for rebooting into recovery or bootloader
          * @hide
          */
-        public static final String DEVICE_PAIRED = "device_paired";
+        public static final String ADVANCED_REBOOT = "advanced_reboot";
+
+        /**
+         * Force authorize Substratum (or equivalent) frontend calling packages by Masquerade
+         * @hide
+         */
+        public static final String FORCE_AUTHORIZE_SUBSTRATUM_PACKAGES = "force_authorize_substratum_packages";
 
         /**
          * This are the settings to be backed up.
@@ -6621,6 +6957,7 @@ public final class Settings {
             ENHANCED_VOICE_PRIVACY_ENABLED,
             TTY_MODE_ENABLED,
             INCALL_POWER_BUTTON_BEHAVIOR,
+            WIFI_DISCONNECT_DELAY_DURATION,
             NIGHT_DISPLAY_CUSTOM_START_TIME,
             NIGHT_DISPLAY_CUSTOM_END_TIME,
             NIGHT_DISPLAY_AUTO_MODE,
@@ -6632,7 +6969,10 @@ public final class Settings {
             DOZE_ENABLED,
             DOZE_PULSE_ON_PICK_UP,
             DOZE_PULSE_ON_DOUBLE_TAP,
-            NFC_PAYMENT_DEFAULT_COMPONENT
+            ADVANCED_REBOOT,
+            STATUS_BAR_SHOW_BATTERY_PERCENT,
+            STATUS_BAR_BATTERY_STYLE,
+            STATUS_BAR_BATTERY_STYLE_TILE
         };
 
         /**
@@ -6874,6 +7214,12 @@ public final class Settings {
         public static final String AIRPLANE_MODE_ON = "airplane_mode_on";
 
         /**
+         * Whether VoLTE Preferred is on
+         * @hide
+         */
+        public static final String VOLTE_PREFERRED_ON = "volte_preferred_on";
+
+        /**
          * Whether Theater Mode is on.
          * {@hide}
          */
@@ -7011,12 +7357,6 @@ public final class Settings {
          * @hide
          */
         public static final String DOCK_SOUNDS_ENABLED = "dock_sounds_enabled";
-
-        /**
-         * Whether to play a sound for dock events, only when an accessibility service is on.
-         * @hide
-         */
-        public static final String DOCK_SOUNDS_ENABLED_WHEN_ACCESSIBILITY = "dock_sounds_enabled_when_accessbility";
 
         /**
          * URI for the "device locked" (keyguard shown) sound.
@@ -7311,13 +7651,6 @@ public final class Settings {
         * @hide
         */
        public static final String MOBILE_DATA_ALWAYS_ON = "mobile_data_always_on";
-
-        /**
-         * Size of the event buffer for IP connectivity metrics.
-         * @hide
-         */
-        public static final String CONNECTIVITY_METRICS_BUFFER_SIZE =
-              "connectivity_metrics_buffer_size";
 
        /** {@hide} */
        public static final String NETSTATS_ENABLED = "netstats_enabled";
@@ -7737,18 +8070,12 @@ public final class Settings {
         */
        public static final String WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON =
                "wifi_networks_available_notification_on";
+
        /**
         * {@hide}
         */
        public static final String WIMAX_NETWORKS_AVAILABLE_NOTIFICATION_ON =
                "wimax_networks_available_notification_on";
-
-       /**
-        * Whether we support connecting to Carrier Networks.
-        * @hide
-        **/
-        public static final String WIFI_CONNECT_CARRIER_NETWORKS =
-               "wifi_connect_carrier_networks";
 
        /**
         * Delay (in seconds) before repeating the Wi-Fi networks available notification.
@@ -7816,6 +8143,22 @@ public final class Settings {
        public static final String WIFI_SAVED_STATE = "wifi_saved_state";
 
        /**
+        * Used to save the hotspot2 on/off state.
+        * This state will be used to open/close passpoint functions
+        *
+        * @hide
+        */
+       public static final String WIFI_HOTSPOT2_ENABLED = "wifi_hotspot2_enabled";
+
+       /**
+        * Used to save the hotspot2 on/off state for Hotspot 2 rel1.
+        * This state will be used to open/close passpoint functions for Hotspot2 rel1
+        *
+        * @hide
+        */
+       public static final String WIFI_HOTSPOT2_REL1_ENABLED = "wifi_hotspot2_rel1_enabled";
+
+       /**
         * The interval in milliseconds to scan as used by the wifi supplicant
         * @hide
         */
@@ -7863,6 +8206,14 @@ public final class Settings {
         */
        public static final String WIFI_SUSPEND_OPTIMIZATIONS_ENABLED =
                "wifi_suspend_optimizations_enabled";
+
+       /**
+        * Setting to turn on auto connect . Enabled by default and
+        * needs to be set to 1 to disable it.
+        * @hide
+        */
+       public static final String WIFI_AUTO_CONNECT_TYPE =
+               "wifi_auto_connect_type";
 
        /**
         * Setting to enable verbose logging in Wi-Fi; disabled by default, and setting to 1
@@ -8162,45 +8513,11 @@ public final class Settings {
         public static final String PAC_CHANGE_DELAY = "pac_change_delay";
 
         /**
-         * Don't attempt to detect captive portals.
-         *
-         * @hide
-         */
-        public static final int CAPTIVE_PORTAL_MODE_IGNORE = 0;
-
-        /**
-         * When detecting a captive portal, display a notification that
-         * prompts the user to sign in.
-         *
-         * @hide
-         */
-        public static final int CAPTIVE_PORTAL_MODE_PROMPT = 1;
-
-        /**
-         * When detecting a captive portal, immediately disconnect from the
-         * network and do not reconnect to that network in the future.
-         *
-         * @hide
-         */
-        public static final int CAPTIVE_PORTAL_MODE_AVOID = 2;
-
-        /**
-         * What to do when connecting a network that presents a captive portal.
-         * Must be one of the CAPTIVE_PORTAL_MODE_* constants above.
-         *
-         * The default for this setting is CAPTIVE_PORTAL_MODE_PROMPT.
-         * @hide
-         */
-        public static final String CAPTIVE_PORTAL_MODE = "captive_portal_mode";
-
-        /**
          * Setting to turn off captive portal detection. Feature is enabled by
          * default and the setting needs to be set to 0 to disable it.
          *
-         * @deprecated use CAPTIVE_PORTAL_MODE_IGNORE to disable captive portal detection
          * @hide
          */
-        @Deprecated
         public static final String
                 CAPTIVE_PORTAL_DETECTION_ENABLED = "captive_portal_detection_enabled";
 
@@ -8462,6 +8779,8 @@ public final class Settings {
          * @see com.android.server.AlarmManagerService.Constants
          */
         public static final String ALARM_MANAGER_CONSTANTS = "alarm_manager_constants";
+
+        public static final String SINGLE_HAND_MODE = "single_hand_mode";
 
         /**
          * Job scheduler specific settings.
@@ -8862,6 +9181,24 @@ public final class Settings {
          * @hide
          */
         public static final String POLICY_CONTROL = "policy_control";
+
+        /**
+         * Defines global runtime overrides to window policy style.
+         *
+         * See {@link android.view.WindowManagerPolicyControl} for value definitions.
+         *
+         * @hide
+         */
+        public static final String POLICY_CONTROL_STYLE = "policy_control_style";
+
+        /**
+         * Defines global runtime overrides to window policy.
+         *
+         * See {@link android.view.WindowManagerPolicyControl} for value format.
+         *
+         * @hide
+         */
+        public static final String POLICY_CONTROL_SELECTED = "policy_control_selected";
 
         /**
          * Defines global zen mode.  ZEN_MODE_OFF, ZEN_MODE_IMPORTANT_INTERRUPTIONS,
@@ -9528,24 +9865,6 @@ public final class Settings {
          * @hide
          */
         public static final String CELL_ON = "cell_on";
-
-        /**
-         * Whether to show the high temperature warning notification.
-         * @hide
-         */
-        public static final String SHOW_TEMPERATURE_WARNING = "show_temperature_warning";
-
-        /**
-         * Temperature at which the high temperature warning notification should be shown.
-         * @hide
-         */
-        public static final String WARNING_TEMPERATURE = "warning_temperature";
-
-        /**
-         * Whether the diskstats logging task is enabled/disabled.
-         * @hide
-         */
-        public static final String ENABLE_DISKSTATS_LOGGING = "enable_diskstats_logging";
     }
 
     /**

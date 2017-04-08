@@ -75,39 +75,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
- * This class gives information about, and interacts
- * with, activities, services, and the containing
- * process.
- * </p>
- *
- * <p>
- * A number of the methods in this class are for
- * debugging or informational purposes and they should
- * not be used to affect any runtime behavior of
- * your app. These methods are called out as such in
- * the method level documentation.
- * </p>
- *
- *<p>
- * Most application developers should not have the need to
- * use this class, most of whose methods are for specialized
- * use cases. However, a few methods are more broadly applicable.
- * For instance, {@link android.app.ActivityManager#isLowRamDevice() isLowRamDevice()}
- * enables your app to detect whether it is running on a low-memory device,
- * and behave accordingly.
- * {@link android.app.ActivityManager#clearApplicationUserData() clearApplicationUserData()}
- * is for apps with reset-data functionality.
- * </p>
- *
- * <p>
- * In some special use cases, where an app interacts with
- * its Task stack, the app may use the
- * {@link android.app.ActivityManager.AppTask} and
- * {@link android.app.ActivityManager.RecentTaskInfo} inner
- * classes. However, in general, the methods in this class should
- * be used for testing and debugging purposes only.
- * </p>
+ * Interact with the overall activities running in the system.
  */
 public class ActivityManager {
     private static String TAG = "ActivityManager";
@@ -126,8 +94,7 @@ public class ActivityManager {
             BUGREPORT_OPTION_FULL,
             BUGREPORT_OPTION_INTERACTIVE,
             BUGREPORT_OPTION_REMOTE,
-            BUGREPORT_OPTION_WEAR,
-            BUGREPORT_OPTION_TELEPHONY
+            BUGREPORT_OPTION_WEAR
     })
     public @interface BugreportMode {}
     /**
@@ -153,13 +120,6 @@ public class ActivityManager {
      * @hide
      */
     public static final int BUGREPORT_OPTION_WEAR = 3;
-
-    /**
-     * Takes a lightweight version of bugreport that only includes a few, urgent sections
-     * used to report telephony bugs.
-     * @hide
-     */
-    public static final int BUGREPORT_OPTION_TELEPHONY = 4;
 
     /**
      * <a href="{@docRoot}guide/topics/manifest/meta-data-element.html">{@code
@@ -945,7 +905,8 @@ public class ActivityManager {
      * @hide
      */
     static public boolean isHighEndGfx() {
-        return !isLowRamDeviceStatic() &&
+        return !("1".equals(SystemProperties.get("persist.sys.force_sw_gles", "0"))) &&
+               !isLowRamDeviceStatic() &&
                 !Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel);
     }
 
@@ -1863,6 +1824,23 @@ public class ActivityManager {
     }
 
     /**
+     * Check whether the current foreground tasks belongs to a given package.
+     *
+     * @param packageName Name of the package to check for
+     *
+     * @return Whether the current foreground tasks belongs to the given package
+     * @hide
+     */
+    public boolean isPackageInForeground(String packageName) {
+        try {
+            return ActivityManagerNative.getDefault().isPackageInForeground(packageName);
+        } catch (RemoteException e) {
+            // System dead, we will be dead too soon!
+            return false;
+        }
+    }
+
+    /**
      * Completely remove the given task.
      *
      * @param taskId Identifier of the task to be removed.
@@ -2183,13 +2161,13 @@ public class ActivityManager {
         public static final int FLAG_FOREGROUND = 1<<1;
 
         /**
-         * Bit for {@link #flags}: set if the service is running in a
+         * Bit for {@link #flags): set if the service is running in a
          * core system process.
          */
         public static final int FLAG_SYSTEM_PROCESS = 1<<2;
 
         /**
-         * Bit for {@link #flags}: set if the service is running in a
+         * Bit for {@link #flags): set if the service is running in a
          * persistent process.
          */
         public static final int FLAG_PERSISTENT_PROCESS = 1<<3;
@@ -3236,7 +3214,7 @@ public class ActivityManager {
         final int density = res.getDisplayMetrics().densityDpi;
         final int sw = res.getConfiguration().smallestScreenWidthDp;
 
-        if (sw < 600) {
+        if (sw < 640) {
             // Smaller than approx 7" tablets, use the regular icon size.
             return density;
         }
@@ -3276,7 +3254,7 @@ public class ActivityManager {
         final int size = res.getDimensionPixelSize(android.R.dimen.app_icon_size);
         final int sw = res.getConfiguration().smallestScreenWidthDp;
 
-        if (sw < 600) {
+        if (sw < 640) {
             // Smaller than approx 7" tablets, use the regular icon size.
             return size;
         }

@@ -62,7 +62,6 @@ interface IBluetooth
     boolean cancelBondProcess(in BluetoothDevice device);
     boolean removeBond(in BluetoothDevice device);
     int getBondState(in BluetoothDevice device);
-    long getSupportedProfiles();
     int getConnectionState(in BluetoothDevice device);
 
     String getRemoteName(in BluetoothDevice device);
@@ -116,4 +115,7 @@ interface IBluetooth
 
     void onLeServiceUp();
     void onBrEdrDown();
+
+    int setSocketOpt(int type, int port, int optionName, in byte [] optionVal, int optionLen);
+    int getSocketOpt(int type, int port, int optionName, out byte [] optionVal);
 }

@@ -76,5 +76,4 @@ interface IKeystoreService {
     int onUserAdded(int userId, int parentId);
     int onUserRemoved(int userId);
     int attestKey(String alias, in KeymasterArguments params, out KeymasterCertificateChain chain);
-    int onDeviceOffBody();
 }

@@ -320,10 +320,10 @@ final class SystemServiceRegistry {
             }});
 
         registerService(Context.KEYGUARD_SERVICE, KeyguardManager.class,
-                new CachedServiceFetcher<KeyguardManager>() {
+                new StaticServiceFetcher<KeyguardManager>() {
             @Override
-            public KeyguardManager createService(ContextImpl ctx) {
-                return new KeyguardManager(ctx);
+            public KeyguardManager createService() {
+                return new KeyguardManager();
             }});
 
         registerService(Context.LAYOUT_INFLATER_SERVICE, LayoutInflater.class,

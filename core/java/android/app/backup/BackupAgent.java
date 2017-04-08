@@ -493,7 +493,7 @@ public abstract class BackupAgent extends ContextWrapper {
      * <p class="note">Attempting to back up files in directories that are ignored by
      * the backup system will have no effect.  For example, if the app calls this method
      * with a file inside the {@link #getNoBackupFilesDir()} directory, it will be ignored.
-     * See {@link #onFullBackup(FullBackupDataOutput)} for details on what directories
+     * See {@link #onFullBackup(FullBackupDataOutput) for details on what directories
      * are excluded from backups.
      *
      * @param file The file to be backed up.  The file must exist and be readable by
@@ -636,8 +636,11 @@ public abstract class BackupAgent extends ContextWrapper {
         // Pull out the domain and set it aside to use when making the tarball.
         String domainPath = FullBackup.getBackupScheme(this).tokenToDirectoryPath(domain);
         if (domainPath == null) {
-            // Should never happen.
-            return;
+            if (startingPath == null) {
+                return;
+            } else {
+                domainPath = startingPath;
+            }
         }
 
         File rootFile = new File(startingPath);

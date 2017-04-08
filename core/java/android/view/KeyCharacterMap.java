@@ -673,8 +673,8 @@ public class KeyCharacterMap implements Parcelable {
      *
      * @return The modifier behavior for this keyboard.
      *
-     * @see #MODIFIER_BEHAVIOR_CHORDED
-     * @see #MODIFIER_BEHAVIOR_CHORDED_OR_TOGGLED
+     * @see {@link #MODIFIER_BEHAVIOR_CHORDED}
+     * @see {@link #MODIFIER_BEHAVIOR_CHORDED_OR_TOGGLED}
      */
     public int getModifierBehavior() {
         switch (getKeyboardType()) {

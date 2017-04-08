@@ -1668,7 +1668,7 @@ public abstract class Context {
      *
      * @param intents An array of Intents to be started.
      * @param options Additional options for how the Activity should be started.
-     * See {@link android.content.Context#startActivity(Intent, Bundle)}
+     * See {@link android.content.Context#startActivity(Intent, Bundle)
      * Context.startActivity(Intent, Bundle)} for more details.
      *
      * @throws ActivityNotFoundException &nbsp;
@@ -1696,7 +1696,7 @@ public abstract class Context {
      * @param intents An array of Intents to be started.
      * @param options Additional options for how the Activity should be started.
      * @param userHandle The user for whom to launch the activities
-     * See {@link android.content.Context#startActivity(Intent, Bundle)}
+     * See {@link android.content.Context#startActivity(Intent, Bundle)
      * Context.startActivity(Intent, Bundle)} for more details.
      *
      * @throws ActivityNotFoundException &nbsp;
@@ -1745,7 +1745,7 @@ public abstract class Context {
      * <var>flagsMask</var>
      * @param extraFlags Always set to 0.
      * @param options Additional options for how the Activity should be started.
-     * See {@link android.content.Context#startActivity(Intent, Bundle)}
+     * See {@link android.content.Context#startActivity(Intent, Bundle)
      * Context.startActivity(Intent, Bundle)} for more details.  If options
      * have also been supplied by the IntentSender, options given here will
      * override any that conflict with those given by the IntentSender.
@@ -2474,8 +2474,9 @@ public abstract class Context {
      * for high frequency calls.
      * </p>
      *
-     * @param service Identifies the service to be started.  The Intent must be
-     *      fully explicit (supplying a component name).  Additional values
+     * @param service Identifies the service to be started.  The Intent must be either
+     *      fully explicit (supplying a component name) or specify a specific package
+     *      name it is targetted to.  Additional values
      *      may be included in the Intent extras to supply arguments along with
      *      this specific start call.
      *
@@ -2553,8 +2554,10 @@ public abstract class Context {
      * {@link #registerReceiver}, since the lifetime of this BroadcastReceiver
      * is tied to another object (the one that registered it).</p>
      *
-     * @param service Identifies the service to connect to.  The Intent must
-     *      specify an explicit component name.
+     * @param service Identifies the service to connect to.  The Intent may
+     *      specify either an explicit component name, or a logical
+     *      description (action, category, etc) to match an
+     *      {@link IntentFilter} published by a service.
      * @param conn Receives information as the service is started and stopped.
      *      This must be a valid ServiceConnection object; it must not be null.
      * @param flags Operation options for the binding.  May be 0,
@@ -3651,6 +3654,16 @@ public abstract class Context {
      * @hide
      */
     public static final String GATEKEEPER_SERVICE = "android.service.gatekeeper.IGateKeeperService";
+
+    /**
+     * Use with {@link #getSystemService} to retrieve a {@link
+     * android.content.om.OverlayManager} for managing overlay packages.
+     *
+     * @see #getSystemService
+     * @see android.content.om.OverlayManager
+     * @hide
+     */
+    public static final String OVERLAY_SERVICE = "overlay";
 
     /**
      * Determine whether the given permission is allowed for a particular

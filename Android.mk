@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 LOCAL_PATH := $(call my-dir)
 
 # We have a special case here where we build the library's resources
@@ -47,6 +48,15 @@ LOCAL_SRC_FILES += \
        core/java/android/speech/tts/EventLogTags.logtags \
        core/java/android/webkit/EventLogTags.logtags \
        core/java/com/android/internal/logging/EventLogTags.logtags \
+
+# Specify the KeyDisabler file
+LOCAL_KEYDISABLER_FILE = ../../$(shell find device/*/$(TARGET_DEVICE)/cmhw/org/cyanogenmod/hardware/KeyDisabler.java)
+
+# If KeyDisabler exists, include it.
+ifneq ($(LOCAL_KEYDISABLER_FILE),)
+	# For KeyDisabler support
+	LOCAL_SRC_FILES += $(LOCAL_KEYDISABLER_FILE)
+endif
 
 ## READ ME: ########################################################
 ##
@@ -108,7 +118,6 @@ LOCAL_SRC_FILES += \
 	core/java/android/bluetooth/IBluetoothA2dpSink.aidl \
 	core/java/android/bluetooth/IBluetoothAvrcpController.aidl \
 	core/java/android/bluetooth/IBluetoothCallback.aidl \
-	core/java/android/bluetooth/IBluetoothProfileServiceConnection.aidl \
 	core/java/android/bluetooth/IBluetoothHeadset.aidl \
 	core/java/android/bluetooth/IBluetoothHeadsetPhone.aidl \
 	core/java/android/bluetooth/IBluetoothHealth.aidl \
@@ -126,6 +135,7 @@ LOCAL_SRC_FILES += \
 	core/java/android/bluetooth/IBluetoothGatt.aidl \
 	core/java/android/bluetooth/IBluetoothGattCallback.aidl \
 	core/java/android/bluetooth/IBluetoothGattServerCallback.aidl \
+	core/java/android/bluetooth/IBluetoothDun.aidl \
 	core/java/android/content/IClipboard.aidl \
 	core/java/android/content/IContentService.aidl \
 	core/java/android/content/IIntentReceiver.aidl \
@@ -136,6 +146,7 @@ LOCAL_SRC_FILES += \
 	core/java/android/content/ISyncContext.aidl \
 	core/java/android/content/ISyncServiceAdapter.aidl \
 	core/java/android/content/ISyncStatusObserver.aidl \
+	core/java/android/content/om/IOverlayManager.aidl \
 	core/java/android/content/pm/ILauncherApps.aidl \
 	core/java/android/content/pm/IOnAppsChangedListener.aidl \
 	core/java/android/content/pm/IOtaDexopt.aidl \
@@ -202,7 +213,6 @@ LOCAL_SRC_FILES += \
 	core/java/android/net/IIpConnectivityMetrics.aidl \
 	core/java/android/net/IEthernetManager.aidl \
 	core/java/android/net/IEthernetServiceListener.aidl \
-	core/java/android/net/INetdEventCallback.aidl \
 	core/java/android/net/INetworkManagementEventObserver.aidl \
 	core/java/android/net/INetworkPolicyListener.aidl \
 	core/java/android/net/INetworkPolicyManager.aidl \
@@ -275,6 +285,7 @@ LOCAL_SRC_FILES += \
 	core/java/android/service/voice/IVoiceInteractionService.aidl \
 	core/java/android/service/voice/IVoiceInteractionSession.aidl \
 	core/java/android/service/voice/IVoiceInteractionSessionService.aidl \
+	core/java/android/service/gesture/IGestureService.aidl \
 	core/java/android/service/wallpaper/IWallpaperConnection.aidl \
 	core/java/android/service/wallpaper/IWallpaperEngine.aidl \
 	core/java/android/service/wallpaper/IWallpaperService.aidl \
@@ -329,6 +340,7 @@ LOCAL_SRC_FILES += \
 	core/java/com/android/internal/policy/IShortcutService.aidl \
 	core/java/com/android/internal/os/IDropBoxManagerService.aidl \
 	core/java/com/android/internal/os/IParcelFileDescriptorFactory.aidl \
+	core/java/com/android/internal/os/IRegionalizationService.aidl \
 	core/java/com/android/internal/os/IResultReceiver.aidl \
 	core/java/com/android/internal/statusbar/IStatusBar.aidl \
 	core/java/com/android/internal/statusbar/IStatusBarService.aidl \
@@ -496,6 +508,13 @@ LOCAL_NO_STANDARD_LIBRARIES := true
 LOCAL_JAVA_LIBRARIES := core-oj core-libart core-lambda-stubs conscrypt okhttp core-junit bouncycastle ext
 LOCAL_STATIC_JAVA_LIBRARIES := framework-protos
 
+ifneq ($(TARGET_KEYHANDLER_PACKAGE),)
+TARGET_KEYHANDLER_SRC_FILES := \
+	$(foreach _,$(TARGET_KEYHANDLER_SRC_FILES),\
+		 ../../$(TARGET_KEYHANDLER_TOP_DIR)/$_)
+LOCAL_SRC_FILES += $(TARGET_KEYHANDLER_SRC_FILES)
+endif
+
 LOCAL_MODULE := framework
 
 LOCAL_DX_FLAGS := --core-library --multi-dex
@@ -575,9 +594,6 @@ aidl_files := \
 	frameworks/base/graphics/java/android/graphics/drawable/Icon.aidl \
 	frameworks/base/core/java/android/accounts/AuthenticatorDescription.aidl \
 	frameworks/base/core/java/android/accounts/Account.aidl \
-	frameworks/base/core/java/android/app/admin/ConnectEvent.aidl \
-	frameworks/base/core/java/android/app/admin/DnsEvent.aidl \
-	frameworks/base/core/java/android/app/admin/NetworkEvent.aidl \
 	frameworks/base/core/java/android/app/admin/SystemUpdatePolicy.aidl \
 	frameworks/base/core/java/android/print/PrintDocumentInfo.aidl \
 	frameworks/base/core/java/android/print/PageRange.aidl \

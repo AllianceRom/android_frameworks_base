@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.android.internal.widget.LockPatternUtils.RequestThrottledException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,19 +61,11 @@ public final class LockPatternChecker {
             final OnVerifyCallback callback) {
         AsyncTask<Void, Void, byte[]> task = new AsyncTask<Void, Void, byte[]>() {
             private int mThrottleTimeout;
-            private List<LockPatternView.Cell> patternCopy;
-
-            @Override
-            protected void onPreExecute() {
-                // Make a copy of the pattern to prevent race conditions.
-                // No need to clone the individual cells because they are immutable.
-                patternCopy = new ArrayList(pattern);
-            }
 
             @Override
             protected byte[] doInBackground(Void... args) {
                 try {
-                    return utils.verifyPattern(patternCopy, challenge, userId);
+                    return utils.verifyPattern(pattern, challenge, userId);
                 } catch (RequestThrottledException ex) {
                     mThrottleTimeout = ex.getTimeoutMs();
                     return null;
@@ -104,19 +95,11 @@ public final class LockPatternChecker {
             final OnCheckCallback callback) {
         AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
             private int mThrottleTimeout;
-            private List<LockPatternView.Cell> patternCopy;
-
-            @Override
-            protected void onPreExecute() {
-                // Make a copy of the pattern to prevent race conditions.
-                // No need to clone the individual cells because they are immutable.
-                patternCopy = new ArrayList(pattern);
-            }
 
             @Override
             protected Boolean doInBackground(Void... args) {
                 try {
-                    return utils.checkPattern(patternCopy, userId, callback::onEarlyMatched);
+                    return utils.checkPattern(pattern, userId, callback::onEarlyMatched);
                 } catch (RequestThrottledException ex) {
                     mThrottleTimeout = ex.getTimeoutMs();
                     return false;

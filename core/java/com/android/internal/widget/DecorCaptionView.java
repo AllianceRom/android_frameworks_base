@@ -416,8 +416,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         if (mClickTarget == mMaximize) {
             maximizeWindow();
         } else if (mClickTarget == mClose) {
-            mOwner.dispatchOnWindowDismissed(
-                    true /*finishTask*/, false /*suppressWindowTransition*/);
+            mOwner.dispatchOnWindowDismissed(true /*finishTask*/);
         }
         return true;
     }

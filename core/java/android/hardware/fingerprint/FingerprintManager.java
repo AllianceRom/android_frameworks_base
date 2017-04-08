@@ -54,7 +54,7 @@ import static android.Manifest.permission.MANAGE_FINGERPRINT;
 
 public class FingerprintManager {
     private static final String TAG = "FingerprintManager";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final int MSG_ENROLL_RESULT = 100;
     private static final int MSG_ACQUIRED = 101;
     private static final int MSG_AUTHENTICATION_SUCCEEDED = 102;
@@ -710,7 +710,7 @@ public class FingerprintManager {
 
     /**
      * Retrieves the authenticator token for binding keys to the lifecycle
-     * of the calling user's fingerprints. Used only by internal clients.
+     * of the current set of fingerprints. Used only by internal clients.
      *
      * @hide
      */

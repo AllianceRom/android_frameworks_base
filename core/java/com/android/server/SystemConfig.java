@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2016 halogenOS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.os.Process;
 import android.os.storage.StorageManager;
+import android.os.SystemProperties;
 import android.util.ArrayMap;
 import android.util.ArraySet;
 import android.util.Slog;
@@ -212,6 +214,11 @@ public class SystemConfig {
                 Environment.getOemDirectory(), "etc", "sysconfig"), ALLOW_FEATURES);
         readPermissions(Environment.buildPath(
                 Environment.getOemDirectory(), "etc", "permissions"), ALLOW_FEATURES);
+        //Remove vulkan specific features
+        if (SystemProperties.getBoolean("persist.graphics.vulkan.disable", false)) {
+            removeFeature(PackageManager.FEATURE_VULKAN_HARDWARE_LEVEL);
+            removeFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION);
+        }
     }
 
     void readPermissions(File libraryDir, int permissionFlag) {
@@ -527,8 +534,8 @@ public class SystemConfig {
             addFeature(PackageManager.FEATURE_SECURELY_REMOVES_USERS, 0);
         }
 
-        for (String featureName : mUnavailableFeatures) {
-            removeFeature(featureName);
+        for (int i = 0; i < mUnavailableFeatures.size(); i++) {
+            removeFeature(mUnavailableFeatures.valueAt(i));
         }
     }
 

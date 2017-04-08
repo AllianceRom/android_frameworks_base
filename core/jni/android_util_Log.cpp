@@ -1,6 +1,7 @@
 /* //device/libs/android_runtime/android_util_Log.cpp
 **
 ** Copyright 2006, The Android Open Source Project
+** Copyright (C) 2016 AllianceROM
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -126,7 +127,7 @@ static jint android_util_Log_logger_entry_max_payload_native(JNIEnv* env ATTRIBU
 static const JNINativeMethod gMethods[] = {
     /* name, signature, funcPtr */
     { "isLoggable",      "(Ljava/lang/String;I)Z", (void*) android_util_Log_isLoggable },
-    { "println_native",  "(IILjava/lang/String;Ljava/lang/String;)I", (void*) android_util_Log_println_native },
+    { "println_native",  "!(IILjava/lang/String;Ljava/lang/String;)I", (void*) android_util_Log_println_native },
     { "logger_entry_max_payload_native",  "()I", (void*) android_util_Log_logger_entry_max_payload_native },
 };
 
@@ -134,12 +135,12 @@ int register_android_util_Log(JNIEnv* env)
 {
     jclass clazz = FindClassOrDie(env, "android/util/Log");
 
-    levels.verbose = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "VERBOSE", "I"));
-    levels.debug = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "DEBUG", "I"));
-    levels.info = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "INFO", "I"));
-    levels.warn = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "WARN", "I"));
-    levels.error = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "ERROR", "I"));
-    levels.assert = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "ASSERT", "I"));
+    levels.verbose  = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz, "VERBOSE", "I"));
+    levels.debug    = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz,   "DEBUG", "I"));
+    levels.info     = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz,    "INFO", "I"));
+    levels.warn     = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz,    "WARN", "I"));
+    levels.error    = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz,   "ERROR", "I"));
+    levels.assert   = env->GetStaticIntField(clazz, GetStaticFieldIDOrDie(env, clazz,  "ASSERT", "I"));
 
     return RegisterMethodsOrDie(env, "android/util/Log", gMethods, NELEM(gMethods));
 }

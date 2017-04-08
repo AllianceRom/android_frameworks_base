@@ -275,7 +275,6 @@ public abstract class Window {
     private TypedArray mWindowStyle;
     private Callback mCallback;
     private OnWindowDismissedCallback mOnWindowDismissedCallback;
-    private OnWindowSwipeDismissedCallback mOnWindowSwipeDismissedCallback;
     private WindowControllerCallback mWindowControllerCallback;
     private OnRestrictedCaptionAreaChangedListener mOnRestrictedCaptionAreaChangedListener;
     private Rect mRestrictedCaptionAreaRect;
@@ -303,7 +302,6 @@ public abstract class Window {
     private boolean mDestroyed;
 
     private boolean mOverlayWithDecorCaptionEnabled = false;
-    private boolean mCloseOnSwipeEnabled = false;
 
     // The current window attributes.
     private final WindowManager.LayoutParams mWindowAttributes =
@@ -582,22 +580,8 @@ public abstract class Window {
          * Called when a window is dismissed. This informs the callback that the
          * window is gone, and it should finish itself.
          * @param finishTask True if the task should also be finished.
-         * @param suppressWindowTransition True if the resulting exit and enter window transition
-         * animations should be suppressed.
          */
-        void onWindowDismissed(boolean finishTask, boolean suppressWindowTransition);
-    }
-
-    /** @hide */
-    public interface OnWindowSwipeDismissedCallback {
-        /**
-         * Called when a window is swipe dismissed. This informs the callback that the
-         * window is gone, and it should finish itself.
-         * @param finishTask True if the task should also be finished.
-         * @param suppressWindowTransition True if the resulting exit and enter window transition
-         * animations should be suppressed.
-         */
-        void onWindowSwipeDismissed();
+        void onWindowDismissed(boolean finishTask);
     }
 
     /** @hide */
@@ -751,8 +735,7 @@ public abstract class Window {
             boolean hardwareAccelerated) {
         mAppToken = appToken;
         mAppName = appName;
-        mHardwareAccelerated = hardwareAccelerated
-                || SystemProperties.getBoolean(PROPERTY_HARDWARE_UI, false);
+        mHardwareAccelerated = true;
         if (wm == null) {
             wm = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
         }
@@ -886,22 +869,9 @@ public abstract class Window {
     }
 
     /** @hide */
-    public final void dispatchOnWindowDismissed(
-            boolean finishTask, boolean suppressWindowTransition) {
+    public final void dispatchOnWindowDismissed(boolean finishTask) {
         if (mOnWindowDismissedCallback != null) {
-            mOnWindowDismissedCallback.onWindowDismissed(finishTask, suppressWindowTransition);
-        }
-    }
-
-    /** @hide */
-    public final void setOnWindowSwipeDismissedCallback(OnWindowSwipeDismissedCallback sdcb) {
-        mOnWindowSwipeDismissedCallback = sdcb;
-    }
-
-    /** @hide */
-    public final void dispatchOnWindowSwipeDismissed() {
-        if (mOnWindowSwipeDismissedCallback != null) {
-            mOnWindowSwipeDismissedCallback.onWindowSwipeDismissed();
+            mOnWindowDismissedCallback.onWindowDismissed(finishTask);
         }
     }
 
@@ -1078,6 +1048,11 @@ public abstract class Window {
         setFlags(0, flags);
     }
 
+    /** @hide */
+    public void clearPrivateFlags(int flags) {
+        setPrivateFlags(0, flags);
+    }
+
     /**
      * Set the flags of the window, as per the
      * {@link WindowManager.LayoutParams WindowManager.LayoutParams}
@@ -1105,6 +1080,10 @@ public abstract class Window {
     }
 
     private void setPrivateFlags(int flags, int mask) {
+        if ((flags & mask & WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY) != 0){
+            mContext.enforceCallingOrSelfPermission("android.permission.PREVENT_POWER_KEY",
+                    "No permission to prevent power key");
+        }
         final WindowManager.LayoutParams attrs = getAttributes();
         attrs.privateFlags = (attrs.privateFlags & ~mask) | (flags & mask);
         dispatchWindowAttributesChanged(attrs);
@@ -2237,21 +2216,4 @@ public abstract class Window {
      * @hide
      */
     public abstract void reportActivityRelaunched();
-
-    /**
-     * Called to set flag to check if the close on swipe is enabled. This will only function if
-     * FEATURE_SWIPE_TO_DISMISS has been set.
-     * @hide
-     */
-    public void setCloseOnSwipeEnabled(boolean closeOnSwipeEnabled) {
-        mCloseOnSwipeEnabled = closeOnSwipeEnabled;
-    }
-
-    /**
-     * @return {@code true} if the close on swipe is enabled.
-     * @hide
-     */
-    public boolean isCloseOnSwipeEnabled() {
-        return mCloseOnSwipeEnabled;
-    }
 }

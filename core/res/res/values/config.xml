@@ -116,17 +116,17 @@
     <bool name="config_sendAudioBecomingNoisy">true</bool>
 
     <!-- The duration (in milliseconds) of a short animation. -->
-    <integer name="config_shortAnimTime">200</integer>
+    <integer name="config_shortAnimTime">180</integer>
 
     <!-- The duration (in milliseconds) of a medium-length animation. -->
-    <integer name="config_mediumAnimTime">400</integer>
+    <integer name="config_mediumAnimTime">360</integer>
 
     <!-- The duration (in milliseconds) of a long animation. -->
-    <integer name="config_longAnimTime">500</integer>
+    <integer name="config_longAnimTime">480</integer>
 
     <!-- The duration (in milliseconds) of the activity open/close and fragment open/close animations. -->
     <integer name="config_activityShortDur">150</integer>
-    <integer name="config_activityDefaultDur">220</integer>
+    <integer name="config_activityDefaultDur">210</integer>
 
     <!-- Duration for the dim animation behind a dialog.  This may be either
          a percentage, which is relative to the duration of the enter/open
@@ -202,7 +202,7 @@
 
     <!-- The threshold angle for any motion detection in auto-power save modes.
          In hundreths of a degree. -->
-    <integer name="config_autoPowerModeThresholdAngle">10</integer>
+    <integer name="config_autoPowerModeThresholdAngle">200</integer>
 
     <!-- The sensor id of an "any motion" sensor used in auto-power save modes.
          0 indicates this sensor is not available. -->
@@ -417,10 +417,7 @@
     <bool translatable="false" name="config_wifi_dual_band_support">false</bool>
 
     <!-- Boolean indicating whether Hotspot 2.0/Passpoint and ANQP queries is enabled -->
-    <bool translatable="false" name="config_wifi_hotspot2_enabled">false</bool>
-
-    <!-- Boolean indicating whether 802.11r Fast BSS Transition is enabled on this platform -->
-    <bool translatable="false" name="config_wifi_fast_bss_transition_enabled">false</bool>
+    <bool translatable="false" name="config_wifi_hotspot2_enabled">true</bool>
 
     <!-- Device type information conforming to Annex B format in WiFi Direct specification.
          The default represents a dual-mode smartphone -->
@@ -431,6 +428,7 @@
          scan and wake the host when a configured SSID is detected by the dongle. This chipset
          capability can provide power savings when wifi needs to be always kept on. -->
     <bool translatable="false" name="config_wifi_background_scan_support">false</bool>
+    <bool translatable="false" name="wifi_autocon">true</bool>
 
     <!-- Boolean indicating we re-try re-associating once upon disconnection and RSSI is high failure  -->
     <bool translatable="true" name="config_wifi_enable_disconnection_debounce">true</bool>
@@ -441,6 +439,12 @@
 
     <!-- Boolean indicating whether or not wifi firmware debugging is enabled -->
     <bool translatable="false" name="config_wifi_enable_wifi_firmware_debugging">true</bool>
+
+    <!-- IpReachability monitor enable/Disable -->
+    <bool translatable="false" name="config_wifi_ipreachability_monitor">false</bool>
+
+    <!-- Integer size limit, in KB, for a single WifiLogger ringbuffer -->
+    <integer translatable="false" name="config_wifi_logger_ring_buffer_size_limit_kb">32</integer>
 
     <!-- Integer size limit, in KB, for a single WifiLogger ringbuffer, in default logging mode -->
     <integer translatable="false" name="config_wifi_logger_ring_buffer_default_size_limit_kb">32</integer>
@@ -463,14 +467,14 @@
     <integer translatable="false" name="config_wifi_framework_SECURITY_AWARD">80</integer>
     <!-- Integer parameters of the wifi to cellular handover feature
          wifi should not stick to bad networks -->
-    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_rssi_threshold_5GHz">-82</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_low_rssi_threshold_5GHz">-70</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_good_rssi_threshold_5GHz">-57</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_rssi_threshold_24GHz">-85</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_low_rssi_threshold_24GHz">-73</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_good_rssi_threshold_24GHz">-60</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_link_speed_24">6</integer>
-    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_link_speed_5">12</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_rssi_threshold_5GHz">-85</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_low_rssi_threshold_5GHz">-72</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_good_rssi_threshold_5GHz">-58</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_rssi_threshold_24GHz">-86</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_low_rssi_threshold_24GHz">-74</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_good_rssi_threshold_24GHz">-62</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_link_speed_24">4</integer>
+    <integer translatable="false" name="config_wifi_framework_wifi_score_bad_link_speed_5">10</integer>
     <integer translatable="false" name="config_wifi_framework_wifi_score_good_link_speed_24">24</integer>
     <integer translatable="false" name="config_wifi_framework_wifi_score_good_link_speed_5">36</integer>
     <string  translatable="false" name="config_wifi_random_mac_oui">DA-A1-19</string>
@@ -487,11 +491,11 @@
     <integer translatable="false" name="config_wifi_framework_network_switch_rx_packet_threshold">20</integer>
 
     <!-- Integer indicating wpa_supplicant scan interval in milliseconds -->
-    <integer translatable="false" name="config_wifi_supplicant_scan_interval">15000</integer>
+    <integer translatable="false" name="config_wifi_supplicant_scan_interval">25000</integer>
 
-    <!-- Integer indicating amount of time failed networks areblacklisted for the purpose
+    <!-- Integer indicating amount of time failed networks are blacklisted for the purpose
          of network switching in milliseconds -->
-    <integer translatable="false" name="config_wifi_network_switching_blacklist_time">172800000</integer>
+    <integer translatable="false" name="config_wifi_network_switching_blacklist_time">129600000</integer>
 
     <!-- Integer indicating wpa_supplicant scan interval when p2p is connected in milliseconds -->
     <integer translatable="false" name="config_wifi_scan_interval_p2p_connected">60000</integer>
@@ -506,7 +510,7 @@
     <integer translatable="false" name="config_wifi_no_network_periodic_scan_interval">300000</integer>
 
     <!-- Integer indicating disconnect mode short scan interval in milliseconds -->
-    <integer translatable="false" name="config_wifi_disconnected_short_scan_interval">15000</integer>
+    <integer translatable="false" name="config_wifi_disconnected_short_scan_interval">18000</integer>
 
     <!-- Integer indicating associated partial scan short interval in milliseconds -->
     <integer translatable="false" name="config_wifi_associated_short_scan_interval">20000</integer>
@@ -525,6 +529,9 @@
 
     <!-- Integer indicating RSSI boost given to current network -->
     <integer translatable="false" name="config_wifi_framework_current_network_boost">16</integer>
+
+    <!-- Integer indicating the number of selective channel scan when Wifi turn on -->
+    <integer translatable="false" name="config_max_initial_scans_on_selective_channels">2</integer>
 
     <!-- Integer indicating how to handle beacons with uninitialized RSSI value of 0 -->
     <integer translatable="false" name="config_wifi_framework_scan_result_rssi_level_patchup_value">-85</integer>
@@ -554,11 +561,8 @@
          Software implementation will be used if config_hardware_auto_brightness_available is not set -->
     <bool name="config_automatic_brightness_available">false</bool>
 
-    <!-- Fast brightness animation ramp rate in brightness units per second-->
+    <!-- Fast brightness animation ramp rate -->
     <integer translatable="false" name="config_brightness_ramp_rate_fast">200</integer>
-
-    <!-- Slow brightness animation ramp rate in brightness units per second-->
-    <integer translatable="false" name="config_brightness_ramp_rate_slow">40</integer>
 
     <!-- Don't name config resources like this.  It should look like config_annoyDianne -->
     <bool name="config_annoy_dianne">true</bool>
@@ -619,7 +623,7 @@
 
     <!-- If true, the screen can be rotated via the accelerometer in all 4
          rotations as the default behavior. -->
-    <bool name="config_allowAllRotations">false</bool>
+    <bool name="config_allowAllRotations">true</bool>
 
     <!-- If true, the direction rotation is applied to get to an application's requested
          orientation is reversed.  Normally, the model is that landscape is
@@ -785,12 +789,12 @@
     <integer name="config_defaultNightDisplayAutoMode">0</integer>
 
     <!-- Default time when Night display is automatically activated.
-         Represented as milliseconds from midnight (e.g. 79200000 == 10pm). -->
-    <integer name="config_defaultNightDisplayCustomStartTime">79200000</integer>
+         Represented as milliseconds from midnight (e.g. 79200000 == 9:30pm). -->
+    <integer name="config_defaultNightDisplayCustomStartTime">77400000</integer>
 
     <!-- Default time when Night display is automatically deactivated.
-         Represented as milliseconds from midnight (e.g. 21600000 == 6am). -->
-    <integer name="config_defaultNightDisplayCustomEndTime">21600000</integer>
+         Represented as milliseconds from midnight (e.g. 21600000 == 6:30am). -->
+    <integer name="config_defaultNightDisplayCustomEndTime">23400000</integer>
 
     <!-- Indicate whether to allow the device to suspend when the screen is off
          due to the proximity sensor.  This resource should only be set to true
@@ -813,12 +817,6 @@
             1 - Go to voice assist
     -->
     <integer name="config_longPressOnBackBehavior">0</integer>
-
-    <!-- Control the behavior when the user panic presses the back button.
-            0 - Nothing
-            1 - Go to home
-    -->
-    <integer name="config_backPanicBehavior">0</integer>
 
     <!-- Control the behavior when the user short presses the power button.
             0 - Nothing
@@ -958,31 +956,31 @@
     <color name="config_defaultNotificationColor">#ffffffff</color>
 
     <!-- Default LED on time for notification LED in milliseconds. -->
-    <integer name="config_defaultNotificationLedOn">500</integer>
+    <integer name="config_defaultNotificationLedOn">550</integer>
 
     <!-- Default LED off time for notification LED in milliseconds. -->
-    <integer name="config_defaultNotificationLedOff">2000</integer>
+    <integer name="config_defaultNotificationLedOff">1850</integer>
 
     <!-- Default value for led color when battery is low on charge -->
-    <integer name="config_notificationsBatteryLowARGB">0xFFFF0000</integer>
+    <integer name="config_notificationsBatteryLowARGB">0xFFFE1204</integer>
 
     <!-- Default value for led color when battery is medium charged -->
-    <integer name="config_notificationsBatteryMediumARGB">0xFFFFFF00</integer>
+    <integer name="config_notificationsBatteryMediumARGB">0xFFFEDA0A</integer>
 
     <!-- Default value for led color when battery is fully charged -->
-    <integer name="config_notificationsBatteryFullARGB">0xFF00FF00</integer>
+    <integer name="config_notificationsBatteryFullARGB">0xFF00B4E7</integer>
 
     <!-- Default value for LED on time when the battery is low on charge in miliseconds -->
-    <integer name="config_notificationsBatteryLedOn">125</integer>
+    <integer name="config_notificationsBatteryLedOn">140</integer>
 
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">false</bool>
 
     <!-- Default value for LED off time when the battery is low on charge in miliseconds -->
-    <integer name="config_notificationsBatteryLedOff">2875</integer>
+    <integer name="config_notificationsBatteryLedOff">2800</integer>
 
     <!-- Number of notifications to keep in the notification service historical archive -->
-    <integer name="config_notificationServiceArchiveSize">100</integer>
+    <integer name="config_notificationServiceArchiveSize">98</integer>
 
     <!-- Allow the menu hard key to be disabled in LockScreen on some devices -->
     <bool name="config_disableMenuKeyInLockScreen">false</bool>
@@ -999,7 +997,7 @@
     <!-- Enable translucent decor by default -->
     <bool name="config_enableTranslucentDecor">true</bool>
 
-    <!-- Is the device capable of hot swapping an UICC Card -->
+    <!-- Whether the device is capable of hot swapping an UICC Card -->
     <bool name="config_hotswapCapable">false</bool>
 
     <!-- Component name of the ICC hotswap prompt for restart dialog -->
@@ -1033,7 +1031,7 @@
 
     <!-- Minimum screen brightness setting allowed by the power manager.
          The user is forbidden from setting the brightness below this level. -->
-    <integer name="config_screenBrightnessSettingMinimum">10</integer>
+    <integer name="config_screenBrightnessSettingMinimum">8</integer>
 
     <!-- Maximum screen brightness allowed by the power manager.
          The user is forbidden from setting the brightness above this level. -->
@@ -1041,17 +1039,7 @@
 
     <!-- Default screen brightness setting.
          Must be in the range specified by minimum and maximum. -->
-    <integer name="config_screenBrightnessSettingDefault">102</integer>
-
-    <!-- Default screen brightness for VR setting. -->
-    <integer name="config_screenBrightnessForVrSettingDefault">86</integer>
-
-    <!-- Minimum screen brightness setting allowed for VR. Device panels start increasing pulse
-         width as brightness decreases below this theshold. -->
-    <integer name="config_screenBrightnessForVrSettingMinimum">79</integer>
-
-    <!-- Maximum screen brightness setting allowed for VR. -->
-    <integer name="config_screenBrightnessForVrSettingMaximum">255</integer>
+    <integer name="config_screenBrightnessSettingDefault">100</integer>
 
     <!-- Screen brightness used to dim the screen while dozing in a very low power state.
          May be less than the minimum allowed brightness setting
@@ -1066,17 +1054,11 @@
          when adapting to brighter or darker environments.  This parameter controls how quickly
          brightness changes occur in response to an observed change in light level that exceeds the
          hysteresis threshold. -->
-    <integer name="config_autoBrightnessBrighteningLightDebounce">4000</integer>
-    <integer name="config_autoBrightnessDarkeningLightDebounce">8000</integer>
-
-    <!-- Initial light sensor event rate in milliseconds for automatic brightness control. This is
-         used for obtaining the first light sample when the device stops dozing.
-
-         Set this to 0 to disable this feature. -->
-    <integer name="config_autoBrightnessInitialLightSensorRate">0</integer>
+    <integer name="config_autoBrightnessBrighteningLightDebounce">3900</integer>
+    <integer name="config_autoBrightnessDarkeningLightDebounce">7800</integer>
 
     <!-- Light sensor event rate in milliseconds for automatic brightness control. -->
-    <integer name="config_autoBrightnessLightSensorRate">250</integer>
+    <integer name="config_autoBrightnessLightSensorRate">150</integer>
 
     <!-- The maximum range of gamma adjustment possible using the screen
          auto-brightness adjustment setting. -->
@@ -1101,26 +1083,6 @@
 
     <!-- Period of time in which to consider light samples in milliseconds. -->
     <integer name="config_autoBrightnessAmbientLightHorizon">10000</integer>
-
-    <!-- This flag enables light sensor sampling while dozing. A single sample is taken upon
-         entering doze mode, and another sample is taken every time the display enters STATE_DOZE
-         or STATE_DOZE_SUSPEND. It is recommended that config_dozeSensorLuxLevels and
-         config_dozeBrightnessBacklightValues have entries so that the doze mode brightness can be
-         determined dynamically.
-     -->
-    <bool name="config_allowAutoBrightnessActiveDozeLightSensor">false</bool>
-
-    <!-- This flag should be used with config_allowAutoBrightnessActiveDozeLightSensor set to true.
-
-         The screen brightness of a device is based off of a ring buffer of the last n seconds of
-         ambient light sensor sample readings.
-
-         If this flag is true, then this buffer is cleared every time a new sample is taken in doze
-         mode and the screen brightness is based off the new reading. This mode may be better suited
-         for watches.
-
-         If this flag is false, then this buffer is untouched. -->
-    <bool name="config_useNewSensorSamplesForDoze">false</bool>
 
     <!-- Screen brightness used to dim the screen when the user activity
          timeout expires.  May be less than the minimum allowed brightness setting
@@ -1183,61 +1145,6 @@
     <integer-array name="config_autoBrightnessKeyboardBacklightValues">
     </integer-array>
 
-    <!-- Array of hysteresis constraint values for brightening, represented as tenths of a
-         percent. The length of this array is assumed to be one greater than
-         config_dynamicHysteresisLuxLevels. The brightening threshold is calculated as
-         lux * (1.0f + CONSTRAINT_VALUE). When the current lux is higher than this threshold,
-         the screen brightness is recalculated. See the config_dynamicHysteresisLuxLevels
-         description for how the constraint value is chosen. -->
-    <integer-array name="config_dynamicHysteresisBrightLevels">
-        <item>100</item>
-    </integer-array>
-
-    <!-- Array of hysteresis constraint values for darkening, represented as tenths of a
-         percent. The length of this array is assumed to be one greater than
-         config_dynamicHysteresisLuxLevels. The darkening threshold is calculated as
-         lux * (1.0f - CONSTRAINT_VALUE). When the current lux is lower than this threshold,
-         the screen brightness is recalculated. See the config_dynamicHysteresisLuxLevels
-         description for how the constraint value is chosen. -->
-    <integer-array name="config_dynamicHysteresisDarkLevels">
-        <item>200</item>
-    </integer-array>
-
-    <!-- Array of ambient lux threshold values. This is used for determining hysteresis constraint
-         values by calculating the index to use for lookup and then setting the constraint value
-         to the corresponding value of the array. The new brightening hysteresis constraint value
-         is the n-th element of config_dynamicHysteresisBrightLevels, and the new darkening
-         hysteresis constraint value is the n-th element of config_dynamicHysteresisDarkLevels.
-
-         The (zero-based) index is calculated as follows: (MAX is the largest index of the array)
-         condition                      calculated index
-         value < lux[0]                 0
-         lux[n] <= value < lux[n+1]     n+1
-         lux[MAX] <= value              MAX+1 -->
-    <integer-array name="config_dynamicHysteresisLuxLevels">
-    </integer-array>
-
-    <!-- Array of ambient light sensor lux threshold values for determining screen brightness for
-         devices that have both an ambient light sensor and the screen on while dozing. This is
-         used to determine the screen brightness while dozing by calculating the index to use for
-         lookup and then setting the screen brightness value to the corresponding value of
-         config_dozeBrightnessBacklightValues.
-
-         The (zero-based) index is calculated as follows: (MAX is the largest index of the array)
-         condition                      calculated index
-         value < lux[0]                 0
-         lux[n] <= value < lux[n+1]     n+1
-         lux[MAX] <= value              MAX+1 -->
-    <integer-array name="config_dozeSensorLuxLevels">
-    </integer-array>
-
-    <!-- Array of values for determining screen brightness for devices that have both an ambient
-         light sensor and the screen on while dozing. The length of this array is assumed to be one
-         greater than config_dozeModeSensorLuxLevels if they are not both empty. See the
-         config_dozeModeSensorLuxLevels description for how the backlight value is chosen. -->
-    <integer-array name="config_dozeBrightnessBacklightValues">
-    </integer-array>
-
     <!-- Amount of time it takes for the light sensor to warm up in milliseconds.
          For this time after the screen turns on, the Power Manager
          will not debounce light sensor readings -->
@@ -1267,6 +1174,8 @@
 
     <!-- By default a product has no distinct default lock wallpaper -->
     <item name="default_lock_wallpaper" type="drawable">@null</item>
+
+    <item name="default_wallpaper" type="drawable">@null</item>
 
     <!-- Component name of the built in wallpaper used to display bitmap wallpapers. This must not be null. -->
     <string name="image_wallpaper_component" translatable="false">com.android.systemui/com.android.systemui.ImageWallpaper</string>
@@ -1387,6 +1296,9 @@
         -->
     </string-array>
 
+    <!-- Component name of the combo network location provider. -->
+    <string name="config_comboNetworkLocationProvider" translatable="false">com.qualcomm.location</string>
+
     <!-- Boolean indicating if current platform supports bluetooth SCO for off call
     use cases -->
     <bool name="config_bluetooth_sco_off_call">true</bool>
@@ -1426,13 +1338,13 @@
     <bool name="config_bluetooth_reload_supported_profiles_when_enabled">false</bool>
 
     <!-- The default data-use polling period. -->
-    <integer name="config_datause_polling_period_sec">600</integer>
+    <integer name="config_datause_polling_period_sec">500</integer>
 
     <!-- The default data-use threshold in bytes. 0 disables-->
     <integer name="config_datause_threshold_bytes">0</integer>
 
     <!-- The default reduced-datarate value in kilobits per sec -->
-    <integer name="config_datause_throttle_kbitsps">300</integer>
+    <integer name="config_datause_throttle_kbitsps">500</integer>
 
     <!-- The default iface on which to monitor data use -->
     <string name="config_datause_iface" translatable="false">rmnet0</string>
@@ -1569,16 +1481,16 @@
     <!-- Max space (in MB) allocated to DownloadManager to store the downloaded
          files if they are to be stored in DownloadManager's data dir,
          which typically is /data/data/com.android.providers.downloads/files -->
-    <integer name="config_downloadDataDirSize">200</integer>
+    <integer name="config_downloadDataDirSize">240</integer>
 
     <!-- Max number of downloads allowed to proceed concurrently -->
-    <integer name="config_MaxConcurrentDownloadsAllowed">5</integer>
+    <integer name="config_MaxConcurrentDownloadsAllowed">25</integer>
 
     <!-- When the free space available in DownloadManager's data dir falls
          below the percentage value specified by this param, DownloadManager
          starts removing files to try to make percentage of available
          free space above this threshold value. -->
-    <integer name="config_downloadDataDirLowSpaceThreshold">10</integer>
+    <integer name="config_downloadDataDirLowSpaceThreshold">11</integer>
 
     <!-- The URL that should be sent in an x-wap-profile header with an HTTP request,
          as defined in the Open Mobile Alliance User Agent Profile specification
@@ -1694,7 +1606,7 @@
     <integer name="config_ntpPollingIntervalShorter">60000</integer>
     <!-- Number of times to try again with the shorter interval, before backing
          off until the normal polling interval. A value < 0 indicates infinite. -->
-    <integer name="config_ntpRetry">3</integer>
+    <integer name="config_ntpRetry">4</integer>
     <!-- If the time difference is greater than this threshold in milliseconds,
          then update the time. -->
     <integer name="config_ntpThreshold">5000</integer>
@@ -1857,21 +1769,17 @@
     <dimen name="config_viewConfigurationTouchSlop">8dp</dimen>
 
     <!-- Minimum velocity to initiate a fling, as measured in dips per second. -->
-    <dimen name="config_viewMinFlingVelocity">50dp</dimen>
+    <dimen name="config_viewMinFlingVelocity">60dp</dimen>
 
     <!-- Maximum velocity to initiate a fling, as measured in dips per second. -->
     <dimen name="config_viewMaxFlingVelocity">8000dp</dimen>
 
     <!-- Amount of time in ms the user needs to press the relevant key to bring up the global actions dialog -->
-    <integer name="config_globalActionsKeyTimeout">500</integer>
-
-    <!-- Distance that should be scrolled in response to a {@link MotionEvent#ACTION_SCROLL event}
-         with an axis value of 1. -->
-    <dimen name="config_scrollFactor">64dp</dimen>
+    <integer name="config_globalActionsKeyTimeout">510</integer>
 
     <!-- Maximum number of grid columns permitted in the ResolverActivity
          used for picking activities to handle an intent. -->
-    <integer name="config_maxResolverActivityColumns">3</integer>
+    <integer name="config_maxResolverActivityColumns">4</integer>
 
     <!-- Array of OEM specific USB mode override config.
          OEM can override a certain USB mode depending on ro.bootmode.
@@ -1887,10 +1795,10 @@
     <bool name="config_syncstorageengine_masterSyncAutomatically">true</bool>
 
     <!--  Maximum number of supported users -->
-    <integer name="config_multiuserMaximumUsers">1</integer>
+    <integer name="config_multiuserMaximumUsers">100</integer>
 
     <!-- Whether UI for multi user should be shown -->
-    <bool name="config_enableMultiUserUI">false</bool>
+    <bool name="config_enableMultiUserUI">true</bool>
 
     <!-- If true, then we do not ask user for permission for apps to connect to USB devices.
          Do not set this to true for production devices. Doing so will cause you to fail CTS. -->
@@ -1935,6 +1843,9 @@
     <!-- Configure wifi tcp buffersizes in the form:
          rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max -->
     <string name="config_wifi_tcp_buffers" translatable="false">524288,1048576,2097152,262144,524288,1048576</string>
+    <!-- Configuration to send sms on 1x when UE is attached to eHRPD and there is an active
+         1xRTT voice call, irrespective of IMS registration state  -->
+    <bool name="config_send_sms1x_on_voice_call">true</bool>
 
     <!-- Whether WiFi display is supported by this device.
          There are many prerequisites for this feature to work correctly.
@@ -1953,12 +1864,6 @@
     <!-- When true, local displays that do not contain any of their own content will automatically
          mirror the content of the default display. -->
     <bool name="config_localDisplaysMirrorContent">true</bool>
-
-    <!-- The default mode for the default display. One of the following values (See Display.java):
-             0 - COLOR_MODE_DEFAULT
-             7 - COLOR_MODE_SRGB
-    -->
-    <integer name="config_defaultDisplayDefaultColorMode">0</integer>
 
     <!-- When true use the linux /dev/input/event subsystem to detect the switch changes
          on the headphone/microphone jack. When false use the older uevent framework. -->
@@ -2297,6 +2202,12 @@
 
     <bool name="config_networkSamplingWakesDevice">true</bool>
 
+    <!-- Path to the library that contains a device specific key handler -->
+    <string name="config_deviceKeyHandlerLib" translatable="false"></string>
+
+    <!-- Name of that key handler class -->
+    <string name="config_deviceKeyHandlerClass" translatable="false"></string>
+
     <string-array translatable="false" name="config_cdma_home_system" />
 
     <!--From SmsMessage-->
@@ -2317,6 +2228,9 @@
     </string-array>
 
     <bool name="config_auto_attach_data_on_creation">true</bool>
+
+    <!-- True if the gesture service should be started at system start -->
+    <bool name="config_enableGestureService">false</bool>
 
     <!-- Values for GPS configuration -->
     <string-array translatable="false" name="config_gpsParameters">
@@ -2629,20 +2543,126 @@
     <string-array translatable="false" name="config_defaultPinnerServiceFiles">
     </string-array>
 
+    <!-- Configuartion to support SIM contact batch operation.-->
+    <bool name="config_sim_phonebook_batch_operation">true</bool>
+    <string-array name="origin_carrier_names">
+        <item>CHINA\u0020\u0020MOBILE</item>
+        <item>CMCC</item>
+        <item>CHN-UNICOM</item>
+        <item>China Mobile</item>
+        <item>China Unicom</item>
+        <item>China Telecom</item>
+        <item>CHN-CT</item>
+        <item>中国移动</item>
+        <item>中国联通</item>
+        <item>中国电信</item>
+        <item>中國移動</item>
+        <item>中國聯通</item>
+        <item>中國電信</item>
+        <item>Searching for Service</item>
+    </string-array>
+
+    <string-array name="locale_carrier_names">
+        <item>China_Mobile</item>
+        <item>China_Mobile</item>
+        <item>China_Unicom</item>
+        <item>China_Mobile</item>
+        <item>China_Unicom</item>
+        <item>China_Telecom</item>
+        <item>China_Telecom</item>
+        <item>China_Mobile</item>
+        <item>China_Unicom</item>
+        <item>China_Telecom</item>
+        <item>China_Mobile</item>
+        <item>China_Unicom</item>
+        <item>China_Telecom</item>
+        <item>roamingTextSearching</item>
+    </string-array>
+
+    <!-- monitor locale change -->
+    <bool name="config_monitor_locale_change">false</bool>
+
+    <!-- display for radio tech -->
+    <bool name="config_display_rat">false</bool>
+
+    <!-- config 2G/3G/4G RAT strings for carriers -->
+    <string name="config_rat_unknown" translatable="false">""</string>
+    <string name="config_rat_2g" translatable="false">2G</string>
+    <string name="config_rat_3g" translatable="false">3G</string>
+    <string name="config_rat_4g" translatable="false">4G</string>
+
+    <!-- Zero Balance redirect URL config -->
+    <string name="operator_config_url" translatable="false"></string>
+    <!-- Zero Balance ping URL config -->
+    <string name="operator_ping_url" translatable="false"></string>
+    <!-- Zero Balance feature enable config -->
+    <bool name="config_zero_balance_operator">false</bool>
+     <!-- Keypress Optimization -->
+    <bool name="config_enableKeypressOptimization">false</bool>
+    <integer-array name="keypress_param_value"/>
+
+    <bool name="config_enableDataSwitch">false</bool>
+    <!-- Whether to use TMO MCC MNC roaming setting -->
+    <bool name="config_regional_mcc_mnc_roaming_setting">false</bool>
+
+    <!-- Whether to use TMO LTE singnal strength threshold -->
+    <bool name="config_regional_lte_singnal_threshold">false</bool>
+    <!-- Whether to use TMO UMTS singnal strength threshold -->
+    <bool name="config_regional_umts_singnal_threshold">false</bool>
+
+    <integer-array name="umts_signal_strength_threshold">
+        <item>-140</item>
+        <item>-113</item>
+        <item>-103</item>
+        <item>-97</item>
+        <item>-89</item>
+        <item>-44</item>
+    </integer-array>
+    <integer-array name="lte_signal_strength_threshold">
+        <item>-140</item>
+        <item>-120</item>
+        <item>-115</item>
+        <item>-110</item>
+        <item>-100</item>
+        <item>-44</item>
+    </integer-array>
+
+    <!--  Enable framework to record video call data usage -->
+    <bool name="config_video_call_datausage_enable">false</bool>
+    <!-- Enables the feature that can show/hide the operator name in statusbar.
+        When true, the user can select to show/hide operator name through a
+        checkbox in Settings. When false, there is no option to show operator
+        name (no checkbox in Settings). -->
+    <bool name="config_showOperatorNameInStatusBar">false</bool>
+    <bool name="config_regional_hotspot_show_maximum_connection_enable">false</bool>
+    <bool name="config_regional_hotspot_show_broadcast_ssid_checkbox">false</bool>
+    <bool name="config_regional_hotspot_show_notification_when_turn_on">false</bool>
+    <bool name="config_passpoint_setting_on">false</bool>
+    <!-- Emergency Number to be invoked when Power key is pressed.
+         Default value is set to 112 as this FR is mainly intended
+         for Indian market-->
+    <string name="power_key_emergency_number">112</string>
+    <!-- Number of power key hits to invoke emergency call -->
+    <integer name="power_key_hits_emergency">3</integer>
+
+    <!-- Allow the gesture to tap the power button N times to start
+         the Emergency Call while the device is non-interactive. -->
+    <bool name="config_emergencyCallOnPowerkeyTapGestureEnabled">false</bool>
+    <bool name="config_volte_preferred">false</bool>
+
+    <!-- Array of numeric that operator considered as domestic roaming -->
+    <string-array translatable="false" name="config_operatorConsideredDomesticRoaming">
+    </string-array>
+
+    <!-- Exceptions of above list -->
+    <string-array translatable="false" name="config_operatorConsideredDomesticRoamingExceptions">
+    </string-array>
+
     <!-- True if camera app should be pinned via Pinner Service -->
     <bool name="config_pinnerCameraApp">false</bool>
 
     <!-- Component that is the default launcher when demo mode is enabled. -->
     <string name="config_demoModeLauncherComponent">com.android.retaildemo/.DemoPlayer</string>
-
-    <!-- Hashed password (SHA-256) used to restrict carrier demo mode operation. -->
-    <string name="config_carrierDemoModePassword" translatable="false"></string>
-
-    <!-- Secure setting used to activate carrier demo mode. -->
-    <string name="config_carrierDemoModeSetting" translatable="false"></string>
-
-    <!-- List of packages to enable in carrier demo mode (comma separated). -->
-    <string name="config_carrierDemoModePackages" translatable="false"></string>
 
     <!-- Flag indicating whether round icons should be parsed from the application manifest. -->
     <bool name="config_useRoundIcon">false</bool>
@@ -2675,14 +2695,6 @@
     <string-array translatable="false" name="config_defaultFirstUserRestrictions">
     </string-array>
 
-    <!-- Default value for android:focusableInTouchMode for some framework scrolling containers.
-         ListView/GridView are notably absent since this is their default anyway.
-         Set to true for watch devices. -->
-    <bool name="config_focusScrollContainersInTouchMode">false</bool>
-
-    <string name="config_networkOverLimitComponent" translatable="false">com.android.systemui/com.android.systemui.net.NetworkOverLimitActivity</string>
-    <string name="config_dataUsageSummaryComponent" translatable="false">com.android.settings/com.android.settings.Settings$DataUsageSummaryActivity</string>
-
     <!-- A array of regex to treat a SMS as VVM SMS if the message body matches.
          Each item represents an entry, which consists of two parts:
          a comma (,) separated list of MCCMNC the regex applies to, followed by a semicolon (;), and
@@ -2702,12 +2714,24 @@
 
     <!-- An array of packages for which notifications cannot be blocked. -->
     <string-array translatable="false" name="config_nonBlockableNotificationPackages" />
+    
+    <string name="permlab_preventpower">override power key</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_preventpower">Allows an app to override the power key.</string>
+    
+    <integer name="config_deviceHardwareKeys">83</integer>
+    
+    <bool name="config_deviceHasVariableButtonBrightness">false</bool>
+    <integer name="config_buttonBrightnessSettingDefault">100</integer>
+    
+    <!-- Boolean to enable stk functionality on Samsung phones -->
+    <bool name="config_samsung_stk">false</bool>
 
-    <!-- Specifies whether the permissions needed by a legacy app should be
-         reviewed before any of its components can run. A legacy app is one
-         with targetSdkVersion < 23, i.e apps using the old permission model.
-         If review is not required, permissions are reviewed before the app
-         is installed. -->
-    <bool name="config_permissionReviewRequired">false</bool>
+    <!-- The list of components which should be automatically disabled. -->
+    <string-array name="config_disabledComponents" translatable="false">
+    </string-array>
 
+    <bool name="config_proximityCheckOnWake">false</bool>
+    <integer name="config_proximityCheckTimeout">300</integer>
+    <bool name="config_proximityCheckOnWakeEnabledByDefault">true</bool>
 </resources>

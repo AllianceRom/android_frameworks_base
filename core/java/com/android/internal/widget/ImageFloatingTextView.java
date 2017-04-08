@@ -71,14 +71,10 @@ public class ImageFloatingTextView extends TextView {
                 .setTextDirection(getTextDirectionHeuristic())
                 .setLineSpacing(getLineSpacingExtra(), getLineSpacingMultiplier())
                 .setIncludePad(getIncludeFontPadding())
+                .setEllipsize(shouldEllipsize ? effectiveEllipsize : null)
+                .setEllipsizedWidth(ellipsisWidth)
                 .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
-                .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL)
-                .setMaxLines(getMaxLines() >= 0 ? getMaxLines() : Integer.MAX_VALUE);
-        if (shouldEllipsize) {
-            builder.setEllipsize(effectiveEllipsize)
-                    .setEllipsizedWidth(ellipsisWidth);
-        }
-
+                .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL);
         // we set the endmargin on the requested number of lines.
         int endMargin = getContext().getResources().getDimensionPixelSize(
                 R.dimen.notification_content_picture_margin);

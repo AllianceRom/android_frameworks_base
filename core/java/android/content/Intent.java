@@ -2608,6 +2608,21 @@ public class Intent implements Parcelable, Cloneable {
     public static final String ACTION_AIRPLANE_MODE_CHANGED = "android.intent.action.AIRPLANE_MODE";
 
     /**
+     * <p>Broadcast Action: The user has changed carrier label:</p>
+     * <ul>
+     *   <li><em>state</em> - String value.</li>
+     * </ul>
+     *
+     * <p class="note">This is a protected intent that can only be sent
+     * by the system.
+     *
+     * @hide
+     */
+    //@SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
+    public static final String ACTION_CUSTOM_CARRIER_LABEL_CHANGED
+            = "android.intent.action.CUSTOM_CARRIER_LABEL";
+
+    /**
      * Broadcast Action: Some content providers have parts of their namespace
      * where they publish new events or items that the user may be especially
      * interested in. For these things, they may broadcast this action when the
@@ -3085,6 +3100,40 @@ public class Intent implements Parcelable, Cloneable {
      */
     public static final String ACTION_MEDIA_RESOURCE_GRANTED =
             "android.intent.action.MEDIA_RESOURCE_GRANTED";
+
+    /**
+     * Broadcast Action: An overlay package has been installed. The data
+     * contains the name of the added overlay package.
+     * @hide
+     */
+    public static final String ACTION_OVERLAY_ADDED = "android.intent.action.OVERLAY_ADDED";
+
+    /**
+     * Broadcast Action: An overlay package has changed. The data contains the
+     * name of the overlay package which has changed. This is broadcast on all
+     * changes to the OverlayInfo returned by {@link
+     * android.content.om.IOverlayManager#getOverlayInfo(String, int)}. The
+     * most common change is a state change that will change whether the
+     * overlay is enabled or not.
+     * @hide
+     */
+    public static final String ACTION_OVERLAY_CHANGED = "android.intent.action.OVERLAY_CHANGED";
+
+    /**
+     * Broadcast Action: An overlay package has been removed. The data contains
+     * the name of the overlay package which has been removed.
+     * @hide
+     */
+    public static final String ACTION_OVERLAY_REMOVED = "android.intent.action.OVERLAY_REMOVED";
+
+    /**
+     * Broadcast Action: The order of a package's list of overlay packages has
+     * changed. The data contains the package name of the overlay package that
+     * had its position in the list adjusted.
+     * @hide
+     */
+    public static final String
+            ACTION_OVERLAY_PRIORITY_CHANGED = "android.intent.action.OVERLAY_PRIORITY_CHANGED";
 
     /**
      * Activity Action: Allow the user to select and return one or more existing
@@ -8140,7 +8189,7 @@ public class Intent implements Parcelable, Cloneable {
      * @return Returns a bit mask of {@link #FILL_IN_ACTION},
      * {@link #FILL_IN_DATA}, {@link #FILL_IN_CATEGORIES}, {@link #FILL_IN_PACKAGE},
      * {@link #FILL_IN_COMPONENT}, {@link #FILL_IN_SOURCE_BOUNDS},
-     * {@link #FILL_IN_SELECTOR} and {@link #FILL_IN_CLIP_DATA} indicating which fields were
+     * {@link #FILL_IN_SELECTOR} and {@link #FILL_IN_CLIP_DATA indicating which fields were
      * changed.
      */
     @FillInFlags

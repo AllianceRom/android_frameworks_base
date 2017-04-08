@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2016 halogenOS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +62,8 @@ public class NativeLibraryHelper {
     // Special value for {@code PackageParser.Package#cpuAbiOverride} to indicate
     // that the cpuAbiOverride must be clear.
     public static final String CLEAR_ABI_OVERRIDE = "-";
+
+    private static final Object mRestoreconSync = new Object();
 
     /**
      * A handle to an opened package, consisting of one or more APKs. Used as
@@ -275,8 +278,12 @@ public class NativeLibraryHelper {
                 throw new IOException("Cannot chmod native library directory "
                         + path.getPath(), e);
             }
-        } else if (!SELinux.restorecon(path)) {
-            throw new IOException("Cannot set SELinux context for " + path.getPath());
+        } else {
+            synchronized (mRestoreconSync) {
+                if (!SELinux.restorecon(path)) {
+                    throw new IOException("Cannot set SELinux context for " + path.getPath());
+                }
+            }
         }
     }
 

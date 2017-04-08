@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2016 halogenOS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,6 +105,7 @@ extern int register_android_media_JetPlayer(JNIEnv *env);
 extern int register_android_media_ToneGenerator(JNIEnv *env);
 
 namespace android {
+extern int register_android_util_SeempLog(JNIEnv* env);
 
 /*
  * JNI-based registration functions.  Note these are properly contained in
@@ -156,7 +158,6 @@ extern int register_android_database_SQLiteGlobal(JNIEnv* env);
 extern int register_android_database_SQLiteDebug(JNIEnv* env);
 extern int register_android_nio_utils(JNIEnv* env);
 extern int register_android_os_Debug(JNIEnv* env);
-extern int register_android_os_GraphicsEnvironment(JNIEnv* env);
 extern int register_android_os_MessageQueue(JNIEnv* env);
 extern int register_android_os_Parcel(JNIEnv* env);
 extern int register_android_os_SELinux(JNIEnv* env);
@@ -358,18 +359,18 @@ static int hasDir(const char* dir)
 {
     struct stat s;
     int res = stat(dir, &s);
-    if (res == 0) {
+    if (res == 0)
         return S_ISDIR(s.st_mode);
-    }
+
     return 0;
 }
 
 static bool hasFile(const char* file) {
     struct stat s;
     int res = stat(file, &s);
-    if (res == 0) {
+    if (res == 0)
         return S_ISREG(s.st_mode);
-    }
+
     return false;
 }
 
@@ -378,9 +379,9 @@ static bool hasFile(const char* file) {
 std::string getProperty(const char* key, const char* defaultValue) {
     std::vector<char> temp(PROPERTY_VALUE_MAX);
     const int len = property_get(key, &temp[0], defaultValue);
-    if (len < 0) {
+    if (len < 0)
         return "";
-    }
+
     return std::string(&temp[0], len);
 }
 
@@ -411,13 +412,11 @@ const std::string readLocale()
         const std::string variant = getProperty("persist.sys.localevar", "");
 
         std::string out = language;
-        if (!country.empty()) {
+        if (!country.empty())
             out = out + "-" + country;
-        }
 
-        if (!variant.empty()) {
+        if (!variant.empty())
             out = out + "-" + variant;
-        }
 
         return out;
     }
@@ -469,9 +468,9 @@ void AndroidRuntime::parseExtraOpts(char* extraOptsBuf, const char* quotingArg)
         if (*end == ' ')
             *end++ = '\0';          /* mark end, advance to indicate more */
 
-        if (quotingArg != NULL) {
+        if (quotingArg != NULL)
             addOption(quotingArg);
-        }
+
         addOption(start);
         start = end;
     }
@@ -497,9 +496,9 @@ bool AndroidRuntime::parseRuntimeOption(const char* property,
     strcpy(buffer, runtimeArg);
     size_t runtimeArgLen = strlen(runtimeArg);
     property_get(property, buffer+runtimeArgLen, defaultArg);
-    if (buffer[runtimeArgLen] == '\0') {
+    if (buffer[runtimeArgLen] == '\0')
         return false;
-    }
+
     addOption(buffer);
     return true;
 }
@@ -524,9 +523,9 @@ bool AndroidRuntime::parseCompilerOption(const char* property,
     strcpy(buffer, compilerArg);
     size_t compilerArgLen = strlen(compilerArg);
     property_get(property, buffer+compilerArgLen, "");
-    if (buffer[compilerArgLen] == '\0') {
+    if (buffer[compilerArgLen] == '\0')
         return false;
-    }
+
     addOption(quotingArg);
     addOption(buffer);
     return true;
@@ -553,9 +552,9 @@ bool AndroidRuntime::parseCompilerRuntimeOption(const char* property,
     strcpy(buffer, runtimeArg);
     size_t runtimeArgLen = strlen(runtimeArg);
     property_get(property, buffer+runtimeArgLen, "");
-    if (buffer[runtimeArgLen] == '\0') {
+    if (buffer[runtimeArgLen] == '\0')
         return false;
-    }
+
     addOption(quotingArg);
     addOption("--runtime-arg");
     addOption(quotingArg);
@@ -633,15 +632,13 @@ int AndroidRuntime::startVm(JavaVM** pJavaVM, JNIEnv** pEnv, bool zygote)
 
     bool checkJni = false;
     property_get("dalvik.vm.checkjni", propBuf, "");
-    if (strcmp(propBuf, "true") == 0) {
-        checkJni = true;
-    } else if (strcmp(propBuf, "false") != 0) {
-        /* property is neither true nor false; fall back on kernel parameter */
+    checkJni = (strcmp(propBuf, "true") == 0);
+    if(!checkJni) {
+        /* Fallback to kernel parameter */
         property_get("ro.kernel.android.checkjni", propBuf, "");
-        if (propBuf[0] == '1') {
-            checkJni = true;
-        }
+        checkJni = (propBuf[0] == '1');
     }
+    
     ALOGD("CheckJNI is %s\n", checkJni ? "ON" : "OFF");
     if (checkJni) {
         /* extended JNI checking */
@@ -943,9 +940,8 @@ char* AndroidRuntime::toSlashClassName(const char* className)
 {
     char* result = strdup(className);
     for (char* cp = result; *cp != '\0'; cp++) {
-        if (*cp == '.') {
+        if (*cp == '.')
             *cp = '/';
-        }
     }
     return result;
 }
@@ -995,7 +991,7 @@ void AndroidRuntime::start(const char* className, const Vector<String8>& options
     if (rootDir == NULL) {
         rootDir = "/system";
         if (!hasDir("/system")) {
-            LOG_FATAL("No root directory specified, and /android does not exist.");
+            LOG_FATAL("No root directory specified, and /system does not exist.");
             return;
         }
         setenv("ANDROID_ROOT", rootDir, 1);
@@ -1261,6 +1257,7 @@ static int register_jni_procs(const RegJNIRec array[], size_t count, JNIEnv* env
 }
 
 static const RegJNIRec gRegJNI[] = {
+    REG_JNI(register_android_util_SeempLog),
     REG_JNI(register_com_android_internal_os_RuntimeInit),
     REG_JNI(register_android_os_SystemClock),
     REG_JNI(register_android_util_EventLog),
@@ -1349,7 +1346,6 @@ static const RegJNIRec gRegJNI[] = {
     REG_JNI(register_android_database_SQLiteDebug),
     REG_JNI(register_android_os_Debug),
     REG_JNI(register_android_os_FileObserver),
-    REG_JNI(register_android_os_GraphicsEnvironment),
     REG_JNI(register_android_os_MessageQueue),
     REG_JNI(register_android_os_SELinux),
     REG_JNI(register_android_os_Trace),

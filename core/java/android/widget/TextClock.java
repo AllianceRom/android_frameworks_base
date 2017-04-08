@@ -130,7 +130,7 @@ public class TextClock extends TextView {
 
     private CharSequence mDescFormat;
 
-    private boolean mRegistered;
+    private boolean mAttached;
 
     private Calendar mTime;
     private String mTimeZone;
@@ -250,7 +250,7 @@ public class TextClock extends TextView {
         }
 
         createTime(mTimeZone);
-        // Wait until registering for events to handle the ticker
+        // Wait until onAttachedToWindow() to handle the ticker
         chooseFormat(false);
     }
 
@@ -501,7 +501,7 @@ public class TextClock extends TextView {
         boolean hadSeconds = mHasSeconds;
         mHasSeconds = DateFormat.hasSeconds(mFormat);
 
-        if (handleTicker && mRegistered && hadSeconds != mHasSeconds) {
+        if (handleTicker && mAttached && hadSeconds != mHasSeconds) {
             if (hadSeconds) getHandler().removeCallbacks(mTicker);
             else mTicker.run();
         }
@@ -515,9 +515,11 @@ public class TextClock extends TextView {
     }
 
     @Override
-    public void onVisibilityAggregated(boolean isVisible) {
-        if (!mRegistered && isVisible) {
-            mRegistered = true;
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        if (!mAttached) {
+            mAttached = true;
 
             registerReceiver();
             registerObserver();
@@ -529,13 +531,20 @@ public class TextClock extends TextView {
             } else {
                 onTimeChanged();
             }
-        } else if (mRegistered && !isVisible) {
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        if (mAttached) {
             unregisterReceiver();
             unregisterObserver();
 
             getHandler().removeCallbacks(mTicker);
 
-            mRegistered = false;
+            mAttached = false;
         }
     }
 
@@ -558,7 +567,7 @@ public class TextClock extends TextView {
     }
 
     private void registerObserver() {
-        if (mRegistered) {
+        if (isAttachedToWindow()) {
             if (mFormatChangeObserver == null) {
                 mFormatChangeObserver = new FormatChangeObserver(getHandler());
             }

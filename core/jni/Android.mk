@@ -24,11 +24,17 @@ ifneq ($(ENABLE_SCHED_BOOST),)
     LOCAL_CFLAGS += -DENABLE_SCHED_BOOST
 endif
 
+ifeq ($(USE_COMPAT_SENSORS_M),true)
+	LOCAL_CFLAGS += -DCOMPAT_SENSORS_M
+	LOCAL_CPPFLAGS += -DCOMPAT_SENSORS_M
+endif
+
 LOCAL_CFLAGS += -DGL_GLEXT_PROTOTYPES -DEGL_EGLEXT_PROTOTYPES
 
 LOCAL_CFLAGS += -DU_USING_ICU_NAMESPACE=0
 
 LOCAL_SRC_FILES:= \
+    android_util_SeempLog.cpp \
     AndroidRuntime.cpp \
     com_android_internal_content_NativeLibraryHelper.cpp \
     com_google_android_gles_jni_EGLImpl.cpp \
@@ -80,7 +86,6 @@ LOCAL_SRC_FILES:= \
     android_text_AndroidBidi.cpp \
     android_text_StaticLayout.cpp \
     android_os_Debug.cpp \
-    android_os_GraphicsEnvironment.cpp \
     android_os_MemoryFile.cpp \
     android_os_MessageQueue.cpp \
     android_os_Parcel.cpp \
@@ -264,7 +269,8 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_SHARED_LIBRARIES += \
     libhwui \
-    libdl
+    libdl \
+    libregionalization
 
 # we need to access the private Bionic header
 # <bionic_tls.h> in com_google_android_gles_jni_GLImpl.cpp
@@ -279,6 +285,10 @@ LOCAL_MODULE:= libandroid_runtime
 #                       off a GCC warning that Clang doesn't know.
 LOCAL_CFLAGS += -Wall -Werror -Wno-error=deprecated-declarations -Wunused -Wunreachable-code \
         -Wno-unknown-pragmas
+
+ifeq ($(TARGET_MORE_OPTIMIZATION),true)
+LOCAL_CFLAGS += -O3
+endif
 
 # -Wno-c++11-extensions: Clang warns about Skia using the C++11 override keyword, but this project
 #                        is not being compiled with that level. Remove once this has changed.

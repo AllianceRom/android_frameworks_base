@@ -18,12 +18,15 @@ package android.widget;
 
 import android.annotation.IntDef;
 import android.annotation.StringRes;
+import android.app.ActivityManager;
 import android.app.INotificationManager;
 import android.app.ITransientNotification;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -379,8 +382,8 @@ public class Toast {
 
         String mPackageName;
 
-        static final long SHORT_DURATION_TIMEOUT = 5000;
-        static final long LONG_DURATION_TIMEOUT = 1000;
+        static final long SHORT_DURATION_TIMEOUT = 2000;
+        static final long LONG_DURATION_TIMEOUT = 6000;
 
         TN(String packageName) {
             // XXX This should be changed to use a Dialog, with a Theme.Toast
@@ -433,6 +436,22 @@ public class Toast {
                 String packageName = mView.getContext().getOpPackageName();
                 if (context == null) {
                     context = mView.getContext();
+                }
+
+                ImageView appIcon = (ImageView) mView.findViewById(android.R.id.icon);
+                if (appIcon != null) {
+                    ActivityManager am =
+                            (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+                    if (!am.isPackageInForeground(packageName)) {
+                        PackageManager pm = context.getPackageManager();
+                        Drawable icon = null;
+                        try {
+                            icon = pm.getApplicationIcon(packageName);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            // nothing to do
+                        }
+                        appIcon.setImageDrawable(icon);
+                    }
                 }
                 mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
                 // We can resolve the Gravity here by using the Locale for getting

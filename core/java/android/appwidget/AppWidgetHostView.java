@@ -347,9 +347,8 @@ public class AppWidgetHostView extends FrameLayout {
     }
 
     /**
-     * Sets an executor which can be used for asynchronously inflating. CPU intensive tasks like
-     * view inflation or loading images will be performed on the executor. The updates will still
-     * be applied on the UI thread.
+     * Sets an executor which can be used for asynchronously inflating and applying the remoteviews.
+     * @see {@link RemoteViews#applyAsync(Context, ViewGroup, RemoteViews.OnViewAppliedListener, Executor)}
      *
      * @param executor the executor to use or null.
      * @hide

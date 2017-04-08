@@ -10004,6 +10004,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
         final int actionMasked = event.getActionMasked();
         if (actionMasked == MotionEvent.ACTION_DOWN) {
+            android.util.SeempLog.record(3);
             // Defensive cleanup for new gesture
             stopNestedScroll();
         }
@@ -10600,6 +10601,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @param event the KeyEvent object that defines the button action
      */
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        android.util.SeempLog.record(4);
         if (KeyEvent.isConfirmKey(keyCode)) {
             if ((mViewFlags & ENABLED_MASK) == DISABLED) {
                 return true;
@@ -10648,6 +10650,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @param event   The KeyEvent object that defines the button action.
      */
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        android.util.SeempLog.record(5);
         if (KeyEvent.isConfirmKey(keyCode)) {
             if ((mViewFlags & ENABLED_MASK) == DISABLED) {
                 return true;
@@ -11157,6 +11160,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @return True if the event was handled, false otherwise.
      */
     public boolean onTouchEvent(MotionEvent event) {
+        android.util.SeempLog.record(3);
         final float x = event.getX();
         final float y = event.getY();
         final int viewFlags = mViewFlags;
@@ -12936,7 +12940,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * Any previously attached StateListAnimator will be detached.
      *
      * @param stateListAnimator The StateListAnimator to update the view
-     * @see android.animation.StateListAnimator
+     * @see {@link android.animation.StateListAnimator}
      */
     public void setStateListAnimator(StateListAnimator stateListAnimator) {
         if (mStateListAnimator == stateListAnimator) {
@@ -16136,9 +16140,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             // we copy in child display lists into ours in drawChild()
             mRecreateDisplayList = true;
 
-            int width = mRight - mLeft;
-            int height = mBottom - mTop;
-            int layerType = getLayerType();
+            int width = mRight - mLeft,
+                height = mBottom - mTop,
+                layerType = getLayerType();
 
             final DisplayListCanvas canvas = renderNode.start(width, height);
             canvas.setHighContrastText(mAttachInfo.mHighContrastText);
@@ -16345,23 +16349,23 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     private void buildDrawingCacheImpl(boolean autoScale) {
         mCachingFailed = false;
 
-        int width = mRight - mLeft;
-        int height = mBottom - mTop;
+        int width  = mRight  - mLeft,
+            height = mBottom - mTop;
 
         final AttachInfo attachInfo = mAttachInfo;
         final boolean scalingRequired = attachInfo != null && attachInfo.mScalingRequired;
 
         if (autoScale && scalingRequired) {
-            width = (int) ((width * attachInfo.mApplicationScale) + 0.5f);
+            width  = (int) ((width * attachInfo.mApplicationScale) + 0.5f);
             height = (int) ((height * attachInfo.mApplicationScale) + 0.5f);
         }
 
         final int drawingCacheBackgroundColor = mDrawingCacheBackgroundColor;
-        final boolean opaque = drawingCacheBackgroundColor != 0 || isOpaque();
-        final boolean use32BitCache = attachInfo != null && attachInfo.mUse32BitDrawingCache;
+        final boolean opaque = drawingCacheBackgroundColor != 0 || isOpaque(),
+                      use32BitCache = attachInfo != null && attachInfo.mUse32BitDrawingCache;
 
-        final long projectedBitmapSize = width * height * (opaque && !use32BitCache ? 2 : 4);
-        final long drawingCacheSize =
+        final long projectedBitmapSize = width * height * (opaque && !use32BitCache ? 2 : 4),
+                   drawingCacheSize =
                 ViewConfiguration.get(mContext).getScaledMaximumDrawingCacheSize();
         if (width <= 0 || height <= 0 || projectedBitmapSize > drawingCacheSize) {
             if (width > 0 && height > 0) {
@@ -16490,12 +16494,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @hide
      */
     public Bitmap createSnapshot(Bitmap.Config quality, int backgroundColor, boolean skipChildren) {
-        int width = mRight - mLeft;
-        int height = mBottom - mTop;
+        int width  = mRight - mLeft,
+            height = mBottom - mTop;
 
         final AttachInfo attachInfo = mAttachInfo;
         final float scale = attachInfo != null ? attachInfo.mApplicationScale : 1.0f;
-        width = (int) ((width * scale) + 0.5f);
+        width  = (int) ( (width * scale) + 0.5f);
         height = (int) ((height * scale) + 0.5f);
 
         Bitmap bitmap = Bitmap.createBitmap(mResources.getDisplayMetrics(),
@@ -16664,9 +16668,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @param offsetRequired
      */
     protected int getFadeTop(boolean offsetRequired) {
-        int top = mPaddingTop;
-        if (offsetRequired) top += getTopPaddingOffset();
-        return top;
+        return offsetRequired ? mPaddingTop + getTopPaddingOffset() : mPaddingTop;
     }
 
     /**
@@ -16674,9 +16676,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @param offsetRequired
      */
     protected int getFadeHeight(boolean offsetRequired) {
-        int padding = mPaddingTop;
-        if (offsetRequired) padding += getTopPaddingOffset();
-        return mBottom - mTop - mPaddingBottom - padding;
+        return mBottom - mTop - mPaddingBottom - 
+                (offsetRequired ? mPaddingTop + getTopPaddingOffset()
+                                : mPaddingTop);
     }
 
     /**
@@ -16732,7 +16734,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * otherwise null.
      */
     public Rect getClipBounds() {
-        return (mClipBounds != null) ? new Rect(mClipBounds) : null;
+        return mClipBounds != null ? new Rect(mClipBounds) : null;
     }
 
 
@@ -16937,7 +16939,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         Bitmap cache = null;
         int layerType = getLayerType(); // TODO: signify cache state with just 'cache' local
         if (layerType == LAYER_TYPE_SOFTWARE || !drawingWithRenderNode) {
-             if (layerType != LAYER_TYPE_NONE) {
+            if (layerType != LAYER_TYPE_NONE && layerType != LAYER_TYPE_SOFTWARE) {
                  // If not drawing with RenderNode, treat HW layers as SW
                  layerType = LAYER_TYPE_SOFTWARE;
                  buildDrawingCache(true);
@@ -16958,16 +16960,15 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             }
         }
 
-        int sx = 0;
-        int sy = 0;
+        int sx = 0, sy = 0;
         if (!drawingWithRenderNode) {
             computeScroll();
             sx = mScrollX;
             sy = mScrollY;
         }
 
-        final boolean drawingWithDrawingCache = cache != null && !drawingWithRenderNode;
-        final boolean offsetForScroll = cache == null && !drawingWithRenderNode;
+        final boolean drawingWithDrawingCache = cache != null && !drawingWithRenderNode,
+                      offsetForScroll = cache == null && !drawingWithRenderNode;
 
         int restoreTo = -1;
         if (!drawingWithRenderNode || transformToApply != null) {
@@ -16996,8 +16997,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 || !hasIdentityMatrix()
                 || (mPrivateFlags3 & PFLAG3_VIEW_IS_ANIMATING_ALPHA) != 0) {
             if (transformToApply != null || !childHasIdentityMatrix) {
-                int transX = 0;
-                int transY = 0;
+                int transX = 0, transY = 0;
 
                 if (offsetForScroll) {
                     transX = -sx;
@@ -17178,8 +17178,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
         // skip step 2 & 5 if possible (common case)
         final int viewFlags = mViewFlags;
-        boolean horizontalEdges = (viewFlags & FADING_EDGE_HORIZONTAL) != 0;
-        boolean verticalEdges = (viewFlags & FADING_EDGE_VERTICAL) != 0;
+        boolean horizontalEdges = (viewFlags & FADING_EDGE_HORIZONTAL) != 0,
+                  verticalEdges = (viewFlags & FADING_EDGE_VERTICAL)   != 0;
         if (!verticalEdges && !horizontalEdges) {
             // Step 3, draw the content
             if (!dirtyOpaque) onDraw(canvas);
@@ -17206,15 +17206,15 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
          * done above)
          */
 
-        boolean drawTop = false;
-        boolean drawBottom = false;
-        boolean drawLeft = false;
-        boolean drawRight = false;
+        boolean drawTop     = false,
+                drawBottom  = false,
+                drawLeft    = false,
+                drawRight   = false;
 
-        float topFadeStrength = 0.0f;
-        float bottomFadeStrength = 0.0f;
-        float leftFadeStrength = 0.0f;
-        float rightFadeStrength = 0.0f;
+        float   topFadeStrength     = 0.0f,
+                bottomFadeStrength  = 0.0f,
+                leftFadeStrength    = 0.0f,
+                rightFadeStrength   = 0.0f;
 
         // Step 2, save the canvas' layers
         int paddingLeft = mPaddingLeft;
@@ -17224,10 +17224,10 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             paddingLeft += getLeftPaddingOffset();
         }
 
-        int left = mScrollX + paddingLeft;
-        int right = left + mRight - mLeft - mPaddingRight - paddingLeft;
-        int top = mScrollY + getFadeTop(offsetRequired);
-        int bottom = top + getFadeHeight(offsetRequired);
+        int left    = mScrollX + paddingLeft,
+            right   = left + mRight - mLeft - mPaddingRight - paddingLeft,
+            top     = mScrollY + getFadeTop(offsetRequired),
+            bottom  = top + getFadeHeight(offsetRequired);
 
         if (offsetRequired) {
             right += getRightPaddingOffset();
@@ -17250,17 +17250,17 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         }
 
         if (verticalEdges) {
-            topFadeStrength = Math.max(0.0f, Math.min(1.0f, getTopFadingEdgeStrength()));
-            drawTop = topFadeStrength * fadeHeight > 1.0f;
-            bottomFadeStrength = Math.max(0.0f, Math.min(1.0f, getBottomFadingEdgeStrength()));
-            drawBottom = bottomFadeStrength * fadeHeight > 1.0f;
+            topFadeStrength     = Math.max(0.0f, Math.min(1.0f, getTopFadingEdgeStrength()));
+            drawTop             = topFadeStrength * fadeHeight > 1.0f;
+            bottomFadeStrength  = Math.max(0.0f, Math.min(1.0f, getBottomFadingEdgeStrength()));
+            drawBottom          = bottomFadeStrength * fadeHeight > 1.0f;
         }
 
         if (horizontalEdges) {
-            leftFadeStrength = Math.max(0.0f, Math.min(1.0f, getLeftFadingEdgeStrength()));
-            drawLeft = leftFadeStrength * fadeHeight > 1.0f;
-            rightFadeStrength = Math.max(0.0f, Math.min(1.0f, getRightFadingEdgeStrength()));
-            drawRight = rightFadeStrength * fadeHeight > 1.0f;
+            leftFadeStrength    = Math.max(0.0f, Math.min(1.0f, getLeftFadingEdgeStrength()));
+            drawLeft            = leftFadeStrength * fadeHeight > 1.0f;
+            rightFadeStrength   = Math.max(0.0f, Math.min(1.0f, getRightFadingEdgeStrength()));
+            drawRight           = rightFadeStrength * fadeHeight > 1.0f;
         }
 
         saveCount = canvas.getSaveCount();
@@ -17371,8 +17371,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             }
         }
 
-        final int scrollX = mScrollX;
-        final int scrollY = mScrollY;
+        final int scrollX = mScrollX,
+                  scrollY = mScrollY;
         if ((scrollX | scrollY) == 0) {
             background.draw(canvas);
         } else {
@@ -23910,8 +23910,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * Determine if this view is rendered on a round wearable device and is the main view
      * on the screen.
      */
-    boolean shouldDrawRoundScrollbar() {
-        if (!mResources.getConfiguration().isScreenRound() || mAttachInfo == null) {
+    private boolean shouldDrawRoundScrollbar() {
+        if (!mResources.getConfiguration().isScreenRound()) {
             return false;
         }
 
@@ -23927,7 +23927,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             return false;
         }
 
-        getLocationInWindow(mAttachInfo.mTmpLocation);
+        getLocationOnScreen(mAttachInfo.mTmpLocation);
         return mAttachInfo.mTmpLocation[0] == insets.getStableInsetLeft()
                 && mAttachInfo.mTmpLocation[1] == insets.getStableInsetTop();
     }

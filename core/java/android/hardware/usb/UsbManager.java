@@ -246,6 +246,14 @@ public class UsbManager {
     public static final String USB_FUNCTION_ACCESSORY = "accessory";
 
     /**
+     * Name of the charging USB function.
+     * Used in extras for the {@link #ACTION_USB_STATE} broadcast
+     *
+     * {@hide}
+     */
+    public static final String USB_FUNCTION_CHARGING = "charging";
+
+    /**
      * Name of extra for {@link #ACTION_USB_PORT_CHANGED}
      * containing the {@link UsbPort} object for the port.
      *
@@ -530,23 +538,33 @@ public class UsbManager {
      * {@link #USB_FUNCTION_MIDI}, {@link #USB_FUNCTION_MTP}, {@link #USB_FUNCTION_PTP},
      * or {@link #USB_FUNCTION_RNDIS}.
      * </p><p>
-     * Also sets whether USB data (for example, MTP exposed pictures) should be made available
-     * on the USB connection when in device mode. Unlocking usb data should only be done with
-     * user involvement, since exposing pictures or other data could leak sensitive
-     * user information.
-     * </p><p>
      * Note: This function is asynchronous and may fail silently without applying
      * the requested changes.
      * </p>
      *
      * @param function name of the USB function, or null to restore the default function
-     * @param usbDataUnlocked whether user data is accessible
      *
      * {@hide}
      */
-    public void setCurrentFunction(String function, boolean usbDataUnlocked) {
+    public void setCurrentFunction(String function) {
         try {
-            mService.setCurrentFunction(function, usbDataUnlocked);
+            mService.setCurrentFunction(function);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
+    /**
+     * Sets whether USB data (for example, MTP exposed pictures) should be made available
+     * on the USB connection when in device mode. Unlocking usb data should only be done with
+     * user involvement, since exposing pictures or other data could leak sensitive
+     * user information.
+     *
+     * {@hide}
+     */
+    public void setUsbDataUnlocked(boolean unlocked) {
+        try {
+            mService.setUsbDataUnlocked(unlocked);
         } catch (RemoteException e) {
             throw e.rethrowFromSystemServer();
         }

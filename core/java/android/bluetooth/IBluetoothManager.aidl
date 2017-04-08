@@ -19,7 +19,6 @@ package android.bluetooth;
 import android.bluetooth.IBluetooth;
 import android.bluetooth.IBluetoothGatt;
 import android.bluetooth.IBluetoothManagerCallback;
-import android.bluetooth.IBluetoothProfileServiceConnection;
 import android.bluetooth.IBluetoothStateChangeCallback;
 
 /**
@@ -34,19 +33,16 @@ interface IBluetoothManager
     void registerStateChangeCallback(in IBluetoothStateChangeCallback callback);
     void unregisterStateChangeCallback(in IBluetoothStateChangeCallback callback);
     boolean isEnabled();
-    boolean enable(String packageName);
-    boolean enableNoAutoConnect(String packageName);
-    boolean disable(String packageName, boolean persist);
+    boolean enable();
+    boolean enableNoAutoConnect();
+    boolean disable(boolean persist);
     int getState();
     IBluetoothGatt getBluetoothGatt();
-
-    boolean bindBluetoothProfileService(int profile, IBluetoothProfileServiceConnection proxy);
-    void unbindBluetoothProfileService(int profile, IBluetoothProfileServiceConnection proxy);
 
     String getAddress();
     String getName();
 
     boolean isBleScanAlwaysAvailable();
-    int updateBleAppCount(IBinder b, boolean enable, String packageName);
+    int updateBleAppCount(IBinder b, boolean enable);
     boolean isBleAppPresent();
 }
