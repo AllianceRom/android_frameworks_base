@@ -3695,6 +3695,17 @@ public final class Settings {
         */
         public static final String TOAST_TEXT_COLOR = "toast_text_color";
 
+         /**
+         /**
+        * @hide
+        */
+        public static final String MASTER_TEXT_COLOR_SWITCH = "master_text_color_switch";
+
+        /**
+        * @hide
+        */
+        public static final String MAIN_TEXT_COLOR = "main_text_color";
+
         /**
          * I am the lolrus.
          * <p>

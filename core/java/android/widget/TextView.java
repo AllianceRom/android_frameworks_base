@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.app.assist.AssistStructure;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.UndoManager;
@@ -323,6 +324,8 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
     // System wide time for last cut, copy or text changed action.
     static long sLastCutCopyOrTextChangedTime;
 
+    private boolean mColorSwitch;
+    private int mColor;
     private ColorStateList mTextColor;
     private ColorStateList mHintTextColor;
     private ColorStateList mLinkTextColor;
@@ -4056,10 +4059,18 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
     }
 
     private void updateTextColors() {
+    	updateColor();
         boolean inval = false;
         int color = mTextColor.getColorForState(getDrawableState(), 0);
         if (color != mCurTextColor) {
             mCurTextColor = color;
+        		mColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System. MASTER_TEXT_COLOR_SWITCH, 0) == 1;
+				if(mColorSwitch){
+            	mCurTextColor = mColor;
+           		 } else {
+            	mCurTextColor = color;  
+        		}
             inval = true;
         }
         if (mLinkTextColor != null) {
@@ -4084,6 +4095,11 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
             invalidate();
         }
     }
+
+    private void updateColor() {
+        mColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.MAIN_TEXT_COLOR, 0xff666666);
+     }
 
     @Override
     protected void drawableStateChanged() {
