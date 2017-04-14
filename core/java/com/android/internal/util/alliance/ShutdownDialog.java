@@ -108,10 +108,10 @@ public class ShutdownDialog extends Dialog {
 
         switch (action) {
             case ACTION_UPDATE:
-                mMessage = mContext.getResources().getString(com.android.internal.R.string.reboot_to_update_prepare);
+                mMessage = mContext.getResources().getString(com.android.internal.R.string.reboot_to_recovery);
                 break;
             case ACTION_FACTORY_RESET:
-                mMessage = mContext.getResources().getString(com.android.internal.R.string.reboot_progress);
+                mMessage = mContext.getResources().getString(com.android.internal.R.string.reboot_to_bootloader);
                 break;
             case ACTION_REBOOT:
             default:

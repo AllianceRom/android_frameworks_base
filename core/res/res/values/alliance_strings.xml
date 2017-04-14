@@ -39,4 +39,8 @@
     <string name="global_action_flashlight">Flashlight</string>
     <string name="restart_systemui">Restart SystemUI</string>
 
+    <!-- Sexy shutdown. -->
+    <string name="reboot_to_recovery">Rebooting to Recovery</string>
+    <string name="reboot_to_bootloader">Rebooting to Bootloader</string>
+
 </resources>
