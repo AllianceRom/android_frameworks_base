@@ -123,11 +123,13 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mKeyguardShowing = false;
     private boolean mDeviceProvisioned = false;
     private ToggleAction.State mAirplaneState = ToggleAction.State.Off;
+	private static boolean mIconSwitch;
     private boolean mIsWaitingForEcmExit = false;
     private boolean mHasTelephony;
     private boolean mHasVibrator;
     private final boolean mShowSilentToggle;
     private static boolean mShowFlashlight;
+	private static boolean mTextSwitch;
     private final EmergencyAffordanceManager mEmergencyAffordanceManager;
     String mActions;
 
@@ -1006,7 +1008,12 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             final String status = getStatus();
             if (!TextUtils.isEmpty(status)) {
                 statusView.setText(status);
-                AllianceUtils.colorizeText(context, statusView, Settings.System.POWER_MENU_SECONDARY_TEXT_COLOR, 0x8a000000);
+			mTextSwitch = Settings.System.getInt(context.getContentResolver(),
+                Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
+				if(mTextSwitch){
+            AllianceUtils.colorizeText(context, statusView, Settings.System.POWER_MENU_SECONDARY_TEXT_COLOR, 0x8a000000);
+			}
+
             } else {
                 statusView.setVisibility(View.GONE);
             }
@@ -1016,14 +1023,22 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             } else if (mIconResId != 0) {
                 icon.setImageDrawable(context.getDrawable(mIconResId));
             }
+			mIconSwitch = Settings.System.getInt(context.getContentResolver(),
+                Settings.System. POWER_MENU_ICON_SWITCH, 0) == 1;
+				if(mIconSwitch){
             AllianceUtils.colorizeIconAtop(context, icon, Settings.System.POWER_MENU_ICON_COLOR, 0xff8b8b8b);
+			}
 
             if (mMessage != null) {
                 messageView.setText(mMessage);
             } else {
                 messageView.setText(mMessageResId);
             }
+			mTextSwitch = Settings.System.getInt(context.getContentResolver(),
+                Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
+				if(mTextSwitch){
             AllianceUtils.colorizeText(context, messageView, Settings.System.POWER_MENU_PRIMARY_TEXT_COLOR, 0xff000000);
+			}
 
             return v;
         }
@@ -1108,7 +1123,11 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             if (messageView != null) {
                 messageView.setText(mMessageResId);
                 messageView.setEnabled(enabled);
-                AllianceUtils.colorizeText(context, messageView, Settings.System.POWER_MENU_PRIMARY_TEXT_COLOR, 0xff000000);
+            mTextSwitch = Settings.System.getInt(context.getContentResolver(),
+                Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
+				if(mTextSwitch){
+            AllianceUtils.colorizeText(context, messageView, Settings.System.POWER_MENU_PRIMARY_TEXT_COLOR, 0xff000000);
+			    }
             }
 
             boolean on = ((mState == State.On) || (mState == State.TurningOn));
@@ -1116,14 +1135,22 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 icon.setImageDrawable(context.getDrawable(
                         (on ? mEnabledIconResId : mDisabledIconResid)));
                 icon.setEnabled(enabled);
-                AllianceUtils.colorizeIconAtop(context, icon, Settings.System.POWER_MENU_ICON_COLOR, 0xff8b8b8b);
+			mIconSwitch = Settings.System.getInt(context.getContentResolver(),
+                Settings.System. POWER_MENU_ICON_SWITCH, 0) == 1;
+				if(mIconSwitch){
+            AllianceUtils.colorizeIconAtop(context, icon, Settings.System.POWER_MENU_ICON_COLOR, 0xff8b8b8b);
+			    }
             }
 
             if (statusView != null) {
                 statusView.setText(on ? mEnabledStatusMessageResId : mDisabledStatusMessageResId);
                 statusView.setVisibility(View.VISIBLE);
                 statusView.setEnabled(enabled);
-                AllianceUtils.colorizeText(context, statusView, Settings.System.POWER_MENU_SECONDARY_TEXT_COLOR, 0x8a000000); 
+            mTextSwitch = Settings.System.getInt(context.getContentResolver(),
+                Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
+				if(mTextSwitch){
+            AllianceUtils.colorizeText(context, statusView, Settings.System.POWER_MENU_SECONDARY_TEXT_COLOR, 0x8a000000);
+			    }
             }
             v.setEnabled(enabled);
 

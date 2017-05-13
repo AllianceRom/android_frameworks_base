@@ -3640,7 +3640,20 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_MENU_SECONDARY_TEXT_COLOR = "power_menu_secondary_text_color";
+        
+        /**
+         * Switch for power menu icon color 
+         * @hide
+         */
+        public static final String POWER_MENU_ICON_SWITCH = "power_menu_icon_switch";  
        
+         /**
+         /**
+         * Switch for power menu text colors 
+         * @hide
+         */
+        public static final String POWER_MENU_TEXT_SWITCH = "power_menu_text_switch"; 
+      
         /**
          * Color of the keyguard clock
          * @hide
