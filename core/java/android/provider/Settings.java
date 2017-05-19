@@ -3719,6 +3719,60 @@ public final class Settings {
         */
         public static final String MAIN_TEXT_COLOR = "main_text_color";
 
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_POSITION = "status_bar_clock_position";
+
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_AM_PM = "status_bar_clock_am_pm";
+
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SECONDS_CLOCK = "status_bar_seconds_clock";
+
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE = "status_bar_date";
+
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_CASE = "status_bar_date_case";
+
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
+
+        /**
+         * Color of the status bar clock
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_COLOR = "status_bar_clock_color";
+
+       /**
+         * Position of the clock on the status bar
+         * @hide
+         */
+        public static final String STATUSBAR_DATE_POSITION = "statusbar_date_position";
+
+        /**
+         * Color of the status bar clock
+         * @hide
+         */
+        public static final String STATUSBAR_CLOCK_FONT = "statusbar_clock_font";
+
         /**
          * I am the lolrus.
          * <p>
