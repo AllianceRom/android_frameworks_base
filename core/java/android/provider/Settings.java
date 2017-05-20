@@ -3726,31 +3726,31 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_POSITION = "status_bar_clock_position";
 
        /**
-         * Position of the clock on the status bar
+         * Position of the clock am/pm on the status bar
          * @hide
          */
         public static final String STATUS_BAR_CLOCK_AM_PM = "status_bar_clock_am_pm";
 
        /**
-         * Position of the clock on the status bar
+         * Show/hide seconds on status bar clock
          * @hide
          */
         public static final String STATUS_BAR_SECONDS_CLOCK = "status_bar_seconds_clock";
 
        /**
-         * Position of the clock on the status bar
+         * Show/hide date on the status bar clock 
          * @hide
          */
         public static final String STATUS_BAR_DATE = "status_bar_date";
 
        /**
-         * Position of the clock on the status bar
+         * Style of date on the status bar clock
          * @hide
          */
         public static final String STATUS_BAR_DATE_CASE = "status_bar_date_case";
 
        /**
-         * Position of the clock on the status bar
+         * Format of date on the status bar clock
          * @hide
          */
         public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
@@ -3762,13 +3762,13 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_COLOR = "status_bar_clock_color";
 
        /**
-         * Position of the clock on the status bar
+         * Position of date on the status bar clock
          * @hide
          */
         public static final String STATUSBAR_DATE_POSITION = "statusbar_date_position";
 
         /**
-         * Color of the status bar clock
+         * Font style of date on the status bar clock
          * @hide
          */
         public static final String STATUSBAR_CLOCK_FONT = "statusbar_clock_font";

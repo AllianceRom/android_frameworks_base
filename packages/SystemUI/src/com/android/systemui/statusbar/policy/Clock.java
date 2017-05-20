@@ -101,7 +101,7 @@ public class Clock extends TextView implements DemoMode {
     private int mClockDateStyle = CLOCK_DATE_STYLE_REGULAR;
     private int mAmPmStyle = AM_PM_STYLE_GONE;
     private int mClockDatePosition = STYLE_DATE_LEFT;
-	private int mColor;
+    private int mColor;
 
     private final Handler handler = new Handler();
     TimerTask second;
