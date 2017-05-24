@@ -85,7 +85,8 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private int mIconSize;
     private int mIconHPadding;
 
-    private int mIconTint = DEFAULT_ICON_TINT;
+    private int mIconTint;
+	private int mIconTintOld = DEFAULT_ICON_TINT;
     private float mDarkIntensity;
     private final Rect mTintArea = new Rect();
     private static final Rect sTmpRect = new Rect();
@@ -105,7 +106,8 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private long mTransitionDeferringDuration;
 
     private ClockController mClockController;
-
+    private static boolean mIconTintSwitch;
+	
     private final ArraySet<String> mIconBlacklist = new ArraySet<>();
 
     private final Runnable mTransitionDeferringDoneRunnable = new Runnable() {
@@ -461,13 +463,22 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mTintAnimator.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
         mTintAnimator.start();
     }
-
+ //Don't forget to change the keys dickhead!!
     private void setIconTintInternal(float darkIntensity) {
         mDarkIntensity = darkIntensity;
-        mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
+		mIconTintSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
+				if(mIconTintSwitch){
+	    mIconTint = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR, Color.WHITE);
         mNotificationIconAreaController.setIconTint(mIconTint);
         applyIconTint();
+		}else{
+        mIconTintOld = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
+        mNotificationIconAreaController.setIconTint(mIconTintOld);
+        applyIconTintOld();		
+		}
     }
 
     private void deferIconTintChange(float darkIntensity) {
@@ -532,6 +543,17 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mBatteryMeterView.setDarkIntensity(
                 isInArea(mTintArea, mBatteryMeterView) ? mDarkIntensity : 0);
         mClockController.setTextColor(mIconTint);
+    }
+
+    private void applyIconTintOld() {
+        for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
+            StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
+            v.setImageTintList(ColorStateList.valueOf(getTint(mTintArea, v, mIconTintOld)));
+        }
+        mSignalCluster.setIconTint(mIconTintOld, mDarkIntensity, mTintArea);
+        mBatteryMeterView.setDarkIntensity(
+                isInArea(mTintArea, mBatteryMeterView) ? mDarkIntensity : 0);
+        mClockController.setTextColor(mIconTintOld);
     }
 
     public void appTransitionPending() {
