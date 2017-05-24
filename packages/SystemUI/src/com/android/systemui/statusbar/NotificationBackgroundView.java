@@ -19,9 +19,11 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -33,6 +35,8 @@ public class NotificationBackgroundView extends View {
     private Drawable mBackground;
     private int mClipTopAmount;
     private int mActualHeight;
+    private int mBackgroundColor;
+    private static boolean mBackgroundColorSwitch;
 
     public NotificationBackgroundView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -96,14 +100,22 @@ public class NotificationBackgroundView extends View {
         final Drawable d = mContext.getDrawable(drawableResId);
         setCustomBackground(d);
     }
-
+// Change the kets twat face!!
     public void setTint(int tintColor) {
+        mBackground.setColorFilter(mBackgroundColor, PorterDuff.Mode.SRC_ATOP);
+        mBackgroundColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
+				if(mBackgroundColorSwitch){
+	    mBackgroundColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR, Color.WHITE);       
+        }else{
         if (tintColor != 0) {
             mBackground.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
         } else {
             mBackground.clearColorFilter();
         }
         invalidate();
+		}
     }
 
     public void setActualHeight(int actualHeight) {
