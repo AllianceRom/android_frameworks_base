@@ -3774,6 +3774,12 @@ public final class Settings {
         public static final String STATUSBAR_CLOCK_FONT = "statusbar_clock_font";
 
         /**
+         * Color notification background
+         * @hide
+         */
+        public static final String NOTIFICATION_BG_COLOR = "notification_bg_color";
+
+        /**
          * I am the lolrus.
          * <p>
          * Nonzero values indicate that the user has a bukkit.

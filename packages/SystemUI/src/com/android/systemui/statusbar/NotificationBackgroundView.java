@@ -100,14 +100,14 @@ public class NotificationBackgroundView extends View {
         final Drawable d = mContext.getDrawable(drawableResId);
         setCustomBackground(d);
     }
-// Change the kets twat face!!
+// Change the switch key twat face!!
     public void setTint(int tintColor) {
         mBackground.setColorFilter(mBackgroundColor, PorterDuff.Mode.SRC_ATOP);
         mBackgroundColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System. POWER_MENU_TEXT_SWITCH, 0) == 1;
 				if(mBackgroundColorSwitch){
-	    mBackgroundColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR, Color.WHITE);       
+	mBackgroundColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NOTIFICATION_BG_COLOR, Color.WHITE);       
         }else{
         if (tintColor != 0) {
             mBackground.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
@@ -115,7 +115,7 @@ public class NotificationBackgroundView extends View {
             mBackground.clearColorFilter();
         }
         invalidate();
-		}
+	}
     }
 
     public void setActualHeight(int actualHeight) {
